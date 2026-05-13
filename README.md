@@ -36,8 +36,13 @@ The application is structured with a modular component-based approach:
 ## How to test
 - Run all unit tests:
   - `npm test`
+- Run coverage analysis:
+  - `npm run test:coverage`
 - Run Vitest in watch mode during development:
   - `npm run test:watch`
+
+## Coverage report
+After running coverage, open `coverage/index.html` to inspect the detailed report.
 
 ## Delivery notes
 - The final code should be zipped and submitted as requested.

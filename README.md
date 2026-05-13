@@ -38,6 +38,10 @@ The application is structured with a modular component-based approach:
   - `npm test`
 - Run coverage analysis:
   - `npm run test:coverage`
+- Run lint across the source files:
+  - `npm run lint`
+- Run lint and automatically fix simple issues:
+  - `npm run lint:fix`
 - Run Vitest in watch mode during development:
   - `npm run test:watch`
 

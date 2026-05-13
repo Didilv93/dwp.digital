@@ -1,0 +1,50 @@
+.contact-form
+  display: grid
+  gap: 1rem
+
+.form-field
+  display: grid
+  gap: 0.5rem
+
+label
+  font-weight: 600
+
+input
+  padding: 0.9rem 1rem
+  border: 1px solid #cbd5e1
+  border-radius: 0.75rem
+  font-size: 1rem
+  transition: border-color 0.2s ease
+
+input:focus
+  outline: none
+  border-color: #2563eb
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18)
+
+.submit-button
+  align-self: start
+  padding: 0.95rem 1.3rem
+  background: #0b3c5d
+  color: white
+  border: none
+  border-radius: 0.75rem
+  font-weight: 700
+  transition: background 0.2s ease
+
+.submit-button:hover
+  background: #1d7a8c
+
+.form-errors
+  min-height: 2.5rem
+
+.error-list
+  margin: 0
+  padding-left: 1.3rem
+  color: #b91c1c
+
+.has-error
+  color: #b91c1c
+
+.success-message
+  margin: 0
+  color: #047857

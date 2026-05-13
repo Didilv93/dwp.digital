@@ -1,3 +1,5 @@
+@use '../../styles/theme' as *
+
 .submission-list-shell
   margin-top: 2rem
 
@@ -13,29 +15,34 @@
   justify-content: space-between
   gap: 1rem
   padding: 1rem
-  background: #f8fafc
-  border: 1px solid #cbd5e1
-  border-radius: 1rem
+  background: $color-surface
+  border: 1px solid $color-border
+  border-radius: $radius
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.06)
+
+  @include respond(sm)
+    flex-direction: column
+    gap: 0.75rem
 
 .submission-info
   display: grid
-  gap: 0.35rem
+  gap: 0.4rem
 
 .submission-info strong
-  font-size: 1rem
+  font-size: $font-size-large
 
 .submission-info span
-  color: #475569
-  font-size: 0.95rem
+  color: $color-muted
+  font-size: $font-size-small
 
 .remove-button
   align-self: center
-  padding: 0.75rem 1rem
-  background: #ef4444
-  color: white
+  padding: 0.85rem 1rem
+  background: $color-danger
+  color: $color-surface
   border: none
-  border-radius: 0.75rem
-  font-weight: 700
+  border-radius: $radius-sm
+  font-weight: $font-weight-bold
 
-.remove-button:hover
-  background: #dc2626
+  &:hover
+    background: $color-danger-soft

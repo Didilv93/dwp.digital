@@ -1,0 +1,46 @@
+$color-primary: #0b3c5d
+$color-primary-soft: #1d7a8c
+$color-secondary: #1a6d8c
+$color-surface: #ffffff
+$color-background: #f3f4f6
+$color-border: #d1d5db
+$color-text: #111827
+$color-muted: #475569
+$color-danger: #ef4444
+$color-danger-soft: #b91c1c
+$color-success: #047857
+$color-shadow: rgba(17, 24, 39, 0.08)
+
+$font-family-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif
+$font-weight-regular: 400
+$font-weight-medium: 600
+$font-weight-bold: 700
+$font-size-base: 1rem
+$font-size-small: 0.95rem
+$font-size-large: 1.125rem
+$line-height-base: 1.6
+$radius: 1rem
+$radius-sm: 0.75rem
+$container-max: 860px
+
+$breakpoint-sm: 480px
+$breakpoint-md: 768px
+$breakpoint-lg: 1024px
+$breakpoint-xl: 1280px
+
+=respond($point)
+  @if $point == sm
+    @media (max-width: 479px)
+      @content
+  @else if $point == md
+    @media (max-width: 767px)
+      @content
+  @else if $point == lg
+    @media (max-width: 1023px)
+      @content
+  @else if $point == xl
+    @media (max-width: 1279px)
+      @content
+
+=fluid-type($min, $max)
+  font-size: clamp($min, calc(#{$min} + (#{$max} - #{$min}) * ((100vw - 320px) / 880)), $max)

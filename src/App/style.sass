@@ -1,32 +1,60 @@
-$brand: #0b3c5d
-$brand-light: #1d7a8c
-$background: #f3f4f6
-$text: #111827
-$border: #d1d5db
+@use '../styles/theme' as *
+
+:root
+  --color-primary: #{$color-primary}
+  --color-primary-soft: #{$color-primary-soft}
+  --color-secondary: #{$color-secondary}
+  --color-surface: #{$color-surface}
+  --color-background: #{$color-background}
+  --color-border: #{$color-border}
+  --color-text: #{$color-text}
+  --color-muted: #{$color-muted}
+  --color-danger: #{$color-danger}
+  --color-success: #{$color-success}
+  --radius: #{$radius}
+  --font-family: #{$font-family-sans}
+  --line-height: #{$line-height-base}
+
+*, *::before, *::after
+  box-sizing: border-box
+
+html
+  font-size: clamp(0.95rem, 1vw + 0.35rem, 1.05rem)
 
 body
   margin: 0
-  font-family: Inter, system-ui, sans-serif
-  background: $background
-  color: $text
+  min-height: 100vh
+  font-family: $font-family-sans
+  font-size: $font-size-base
+  line-height: $line-height-base
+  color: $color-text
+  background: $color-background
+
+button,
+input
+  font: inherit
 
 .app-shell
-  max-width: 860px
+  max-width: $container-max
   margin: 2rem auto
-  padding: 1.5rem
-  background: #ffffff
-  border: 1px solid $border
-  border-radius: 16px
-  box-shadow: 0 18px 40px rgba(17, 24, 39, 0.08)
+  padding: 1.75rem
+  background: $color-surface
+  border: 1px solid $color-border
+  border-radius: $radius
+  box-shadow: 0 18px 40px $color-shadow
+
+  @include respond(md)
+    margin: 1.5rem 1rem
+    padding: 1.5rem
+
+  @include respond(sm)
+    margin: 1rem 0.75rem
+    padding: 1.25rem
 
 h1
-  margin: 0 0 0.5rem
-  font-size: 2rem
+  margin: 0 0 0.75rem
+  @include fluid-type(1.75rem, 2.25rem)
 
 p
   margin: 0 0 1.5rem
-  line-height: 1.6
-
-button
-  font: inherit
-  cursor: pointer
+  line-height: 1.75

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
@@ -7,9 +7,10 @@ export default defineConfig({
     include: ['src/**/*.test.ts'],
     coverage: {
       provider: 'v8',
+      enabled: true,
       reporter: ['text', 'lcov', 'html'],
-      all: true,
-      src: ['src'],
+      include: ['src/**/*.{ts,tsx,js,jsx}'],
+      exclude: ['node_modules', 'dist', 'coverage', 'src/**/*.d.{ts,js}'],
       reportsDirectory: 'coverage',
     },
   },

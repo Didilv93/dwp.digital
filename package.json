@@ -12,6 +12,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.6",
     "jsdom": "^29.1.1",
     "sass": "^1.77.0",
     "typescript": "^5.5.4",

@@ -11,11 +11,13 @@ export function createSubmissionList(): SubmissionListComponent {
   container.className = 'submission-list-shell';
 
   const title = document.createElement('h2');
+  title.id = 'submission-list-title';
   title.textContent = 'Recent submissions';
 
   const list = document.createElement('ul');
   list.className = 'submission-list';
 
+  container.setAttribute('aria-labelledby', 'submission-list-title');
   container.append(title, list);
 
   function createItem(data: SubmissionData) {
@@ -43,6 +45,7 @@ export function createSubmissionList(): SubmissionListComponent {
     removeButton.type = 'button';
     removeButton.className = 'remove-button';
     removeButton.textContent = 'Remove';
+    removeButton.setAttribute('aria-label', `Remove submission for ${data.name}`);
     removeButton.addEventListener('click', () => item.remove());
 
     item.append(summary, removeButton);

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(node -e \"const m = require\\('./node_modules/vitest-axe/dist/index.cjs'\\); console.log\\(Object.keys\\(m\\)\\)\")",
+      "Bash(npm test *)"
+    ]
+  }
+}

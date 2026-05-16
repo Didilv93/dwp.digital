@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    setupFiles: ['src/test-setup/a11y.ts'],
     include: ['src/**/*.test.ts'],
     coverage: {
       provider: 'v8',

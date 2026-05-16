@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { axe } from 'vitest-axe';
-import { createForm } from './index';
+import { createForm } from '../index';
 
 const VALID = {
   fullName: 'Diego Silva',

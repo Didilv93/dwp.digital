@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { axe } from 'vitest-axe';
-import { App } from './index';
+import { App } from '../index';
 
 const VALID = {
   fullName: 'Alice Smith',

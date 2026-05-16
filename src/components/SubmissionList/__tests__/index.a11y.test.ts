@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { axe } from 'vitest-axe';
-import { createSubmissionList } from './index';
-import type { SubmissionData } from '../Form/index';
+import { createSubmissionList } from '../index';
+import type { SubmissionData } from '../../Form/index';
 
 const ALICE: SubmissionData = {
   name: 'Alice Smith',

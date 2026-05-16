@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createSubmissionList } from './index';
+import { createSubmissionList } from '../index';
 
 describe('SubmissionList', () => {
   beforeEach(() => {

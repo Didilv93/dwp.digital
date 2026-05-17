@@ -1,60 +1,130 @@
-# DWP Digital - Front End Developer Coding Exercise
+# DWP Digital — Front End Developer Coding Exercise
 
-This repository contains the solution for the DWP Digital Front End Developer technical exercise.
+## Solution overview
 
-## Objective
-The application is a single-page interface where the user fills out a form with:
-- Name
-- Email
-- Date of birth
-- Phone number
+The application is a single-page contact form built with **Vanilla TypeScript**, **Sass**, and **Vite** — no UI frameworks. The user fills in name, email, date of birth and phone number; on submission the data is validated with custom logic and appended to a list on the same page. Each entry can be removed individually.
 
-On submission, the data is validated with custom logic and displayed below the form on the same page. Each new submission is appended to the list and can be removed individually.
+The project follows a **component-based architecture** where each component owns its HTML template, behaviour and styles as co-located files:
 
-## Project architecture
-The application is structured with a modular component-based approach:
-- `src/App/index.ts` — main application component
-- `src/components/Form/index.ts` — form component and submission logic
-- `src/components/SubmissionList/index.ts` — submissions list component with remove functionality
-- `src/utils/validation.ts` — custom field validation
-- `src/App/style.sass`, `src/components/Form/style.sass`, `src/components/SubmissionList/style.sass` — component-level Sass styles
+```
+src/
+├── App/
+│   └── style.sass                   # two-column desktop grid layout
+├── components/
+│   ├── Form/
+│   │   ├── index.html               # form template (single source of truth)
+│   │   ├── index.ts                 # validation, error summary, live region
+│   │   └── style.sass
+│   └── SubmissionList/
+│       ├── index.html               # list template with <template> element
+│       ├── index.ts                 # add / remove, focus management, announcements
+│       └── style.sass
+├── styles/
+│   └── theme.sass                   # design tokens shared across components
+├── utils/
+│   └── validation.ts                # pure field validation functions
+└── test-setup/                      # Vitest + axe-core global configuration
+```
 
-## Technologies used
-- Plain HTML in `index.html`
-- Sass for component styles
-- TypeScript for component logic
-- Vite as the build and development tool
-- Vitest for unit testing
+A custom **Vite plugin** reads each `index.html` at build time and inlines it into `index.html` at the root, eliminating layout shift and keeping component HTML as the single source of truth for both the browser and the test fixtures.
 
-## How to run
-1. Install dependencies:
-   - `npm install`
-2. Start the development server:
-   - `npm run dev`
-3. Open the URL shown in the terminal (for example, `http://localhost:5173`).
+Accessibility was treated as a first-class concern throughout: WCAG 2.2 AA colour contrast, `aria-live` regions for form errors and list changes, focus management after item removal, and full `axe-core` automated scanning on every test run.
 
-## How to test
-- Run all unit tests:
-  - `npm test`
-- Run coverage analysis:
-  - `npm run test:coverage`
-- Run lint across the source files:
-  - `npm run lint`
-- Run lint and automatically fix simple issues:
-  - `npm run lint:fix`
-- Run Vitest in watch mode during development:
-  - `npm run test:watch`
+---
 
-## Coverage report
-After running coverage, open `coverage/index.html` to inspect the detailed report.
+## Getting started
 
-## Delivery notes
-- The final code should be zipped and submitted as requested.
-- Rename code files to `.txt` before creating the zip file, as required by DWP.
-- No UI framework was used; the application uses HTML, Sass, and vanilla JavaScript/TypeScript.
+> **Note — files arrive with a `.txt` extension.** See the [Restoring files from `.txt`](#restoring-files-from-txt) section below before running the application.
 
-## Accessibility and compatibility
-- Labels are properly associated with each form field.
-- Error messages are presented accessibly.
-- The form includes visible focus states and does not rely on native browser validation.
-- The project is prepared to run in modern browsers according to DWP technology guidance.
+### 1 · Install dependencies
+
+```bash
+npm install
+```
+
+### 2 · Start the development server
+
+```bash
+npm run dev
+```
+
+Open the URL shown in the terminal (e.g. `http://localhost:5173`).
+
+### 3 · Build for production
+
+```bash
+npm run build
+npm run preview
+```
+
+---
+
+## Restoring files from `.txt`
+
+To comply with DWP email delivery requirements, all project files were renamed with a `.txt` suffix before zipping. The `scripts/` folder contains helpers to convert them back instantly.
+
+### Step 1 — restore the scripts themselves
+
+The scripts also arrive as `.txt`. Rename them first by removing the `.txt` extension:
+
+| File as received | Rename to |
+|---|---|
+| `scripts/from_txt.bat.txt` | `scripts/from_txt.bat` |
+| `scripts/to_txt.bat.txt` | `scripts/to_txt.bat` |
+| `scripts/from_txt.sh.txt` | `scripts/from_txt.sh` |
+| `scripts/to_txt.sh.txt` | `scripts/to_txt.sh` |
+
+### Step 2 — run the restore script
+
+**Windows** — double-click `scripts\from_txt.bat`, or run from the project root:
+```
+scripts\from_txt.bat
+```
+
+**Linux / Mac** — run from the project root:
+```bash
+bash scripts/from_txt.sh
+```
+
+All 32 project files will be renamed back to their original extensions in place. The folder structure is untouched.
+
+### Re-converting to `.txt` (optional)
+
+If you need to re-pack the project:
+
+```
+scripts\to_txt.bat        # Windows
+bash scripts/to_txt.sh    # Linux / Mac
+```
+
+---
+
+## Running tests
+
+```bash
+npm test                  # run all tests once
+npm run test:watch        # watch mode during development
+npm run test:coverage     # generate coverage report
+```
+
+Open `coverage/index.html` for the detailed coverage report.
+
+The test suite includes **automated WCAG 2.2 AA scans** via `axe-core` on every component state (initial render, after submission, after removal, with validation errors).
+
+## Linting
+
+```bash
+npm run lint              # check
+npm run lint:fix          # check and auto-fix
+```
+
+## Technologies
+
+| Layer | Choice |
+|---|---|
+| Language | TypeScript (strict) |
+| Styles | Sass (component-scoped) |
+| Bundler | Vite |
+| Testing | Vitest + jsdom + vitest-axe |
+| Accessibility | axe-core (WCAG 2.2 AA) |
+| Frameworks | None |

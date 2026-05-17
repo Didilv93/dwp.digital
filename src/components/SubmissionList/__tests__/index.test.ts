@@ -1,41 +1,47 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { createSubmissionList } from '../index';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { initSubmissionList } from '../index';
+import { LIST_HTML } from '../../../test-setup/fixtures';
 
 describe('SubmissionList', () => {
+  let wrapper: HTMLElement;
+  let addSubmission: ReturnType<typeof initSubmissionList>['addSubmission'];
+
   beforeEach(() => {
-    document.body.innerHTML = '';
+    wrapper = document.createElement('div');
+    wrapper.innerHTML = LIST_HTML;
+    document.body.appendChild(wrapper);
+    const list = wrapper.querySelector<HTMLUListElement>('#submission-list')!;
+    ({ addSubmission } = initSubmissionList(list));
+  });
+
+  afterEach(() => {
+    document.body.removeChild(wrapper);
   });
 
   it('adds a submission to the list', () => {
-    const component = createSubmissionList();
-    document.body.appendChild(component.element);
-
-    component.addSubmission({
+    addSubmission({
       name: 'Diego Silva',
       email: 'diego@example.com',
       dateOfBirth: '1990-05-13',
       phone: '+44 7123 456 789',
     });
 
-    expect(component.element.querySelectorAll('li')).toHaveLength(1);
-    expect(component.element.textContent).toContain('Diego Silva');
+    expect(wrapper.querySelectorAll('li')).toHaveLength(1);
+    expect(wrapper.textContent).toContain('Diego Silva');
   });
 
   it('removes a submission when the remove button is clicked', () => {
-    const component = createSubmissionList();
-    document.body.appendChild(component.element);
-
-    component.addSubmission({
+    addSubmission({
       name: 'Diego Silva',
       email: 'diego@example.com',
       dateOfBirth: '1990-05-13',
       phone: '+44 7123 456 789',
     });
 
-    const removeButton = component.element.querySelector('button');
+    const removeButton = wrapper.querySelector('button');
     expect(removeButton).toBeInstanceOf(HTMLButtonElement);
 
-    removeButton?.dispatchEvent(new MouseEvent('click'));
-    expect(component.element.querySelectorAll('li')).toHaveLength(0);
+    removeButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(wrapper.querySelectorAll('li')).toHaveLength(0);
   });
 });

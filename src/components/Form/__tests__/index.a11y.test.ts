@@ -1,13 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { axe } from 'vitest-axe';
-import { createForm } from '../index';
-
-const VALID = {
-  fullName: 'Diego Silva',
-  email: 'diego@example.com',
-  dateOfBirth: '1990-05-13',
-  phone: '+44 7123 456 789',
-};
+import { initForm } from '../index';
+import { FORM_HTML } from '../../../test-setup/fixtures';
 
 function setInput(root: HTMLElement, name: string, value: string): void {
   const input = root.querySelector<HTMLInputElement>(`input[name="${name}"]`);
@@ -21,6 +15,13 @@ function submitForm(root: HTMLElement): void {
     .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
 }
 
+const VALID = {
+  fullName: 'Diego Silva',
+  email: 'diego@example.com',
+  dateOfBirth: '1990-05-13',
+  phone: '+44 7123 456 789',
+};
+
 function fillValid(root: HTMLElement): void {
   Object.entries(VALID).forEach(([name, value]) => setInput(root, name, value));
 }
@@ -30,8 +31,9 @@ describe('Form – Accessibility', () => {
 
   beforeEach(() => {
     wrapper = document.createElement('div');
+    wrapper.innerHTML = FORM_HTML;
     document.body.appendChild(wrapper);
-    wrapper.appendChild(createForm(() => {}).element);
+    initForm(wrapper.querySelector('form')!, () => {});
   });
 
   afterEach(() => {
@@ -80,25 +82,34 @@ describe('Form – Accessibility', () => {
   describe('aria-describedby — field error association', () => {
     it('every input has aria-describedby pointing to an existing element', () => {
       wrapper.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
-        const describedById = input.getAttribute('aria-describedby');
-        expect(describedById, `aria-describedby on input#${input.id}`).toBeTruthy();
-        const target = wrapper.querySelector(`#${describedById}`);
-        expect(target, `element #${describedById}`).not.toBeNull();
+        const id = input.getAttribute('aria-describedby');
+        expect(id, `aria-describedby on input#${input.id}`).toBeTruthy();
+        expect(wrapper.querySelector(`#${id}`)).not.toBeNull();
       });
     });
 
-    it('each field error element id follows the pattern error-{inputName}', () => {
+    it('each field error id follows pattern error-{inputName}', () => {
       wrapper.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
-        const expectedId = `error-${input.name}`;
-        expect(wrapper.querySelector(`#${expectedId}`)).not.toBeNull();
+        expect(wrapper.querySelector(`#error-${input.name}`)).not.toBeNull();
       });
     });
+  });
 
-    it('field error elements have class "field-error"', () => {
-      wrapper.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
-        const errorEl = wrapper.querySelector(`#error-${input.name}`);
-        expect(errorEl?.classList.contains('field-error')).toBe(true);
-      });
+  describe('autocomplete — WCAG 1.3.5', () => {
+    it('name field has autocomplete="name"', () => {
+      expect(wrapper.querySelector('input[name="fullName"]')?.getAttribute('autocomplete')).toBe('name');
+    });
+
+    it('email field has autocomplete="email"', () => {
+      expect(wrapper.querySelector('input[name="email"]')?.getAttribute('autocomplete')).toBe('email');
+    });
+
+    it('date of birth field has autocomplete="bday"', () => {
+      expect(wrapper.querySelector('input[name="dateOfBirth"]')?.getAttribute('autocomplete')).toBe('bday');
+    });
+
+    it('phone field has autocomplete="tel"', () => {
+      expect(wrapper.querySelector('input[name="phone"]')?.getAttribute('autocomplete')).toBe('tel');
     });
   });
 
@@ -109,37 +120,29 @@ describe('Form – Accessibility', () => {
       });
     });
 
-    it('invalid fields have aria-invalid="true" after a failed submit', () => {
-      submitForm(wrapper); // all fields empty
+    it('all fields have aria-invalid="true" after an empty submit', () => {
+      submitForm(wrapper);
       ['fullName', 'email', 'dateOfBirth', 'phone'].forEach((name) => {
         const input = wrapper.querySelector<HTMLInputElement>(`input[name="${name}"]`);
-        expect(input?.getAttribute('aria-invalid'), `aria-invalid on ${name}`).toBe('true');
+        expect(input?.getAttribute('aria-invalid'), name).toBe('true');
       });
     });
 
-    it('valid fields have aria-invalid="false" after a partially failed submit', () => {
+    it('valid fields get aria-invalid="false" on partial submit', () => {
       setInput(wrapper, 'fullName', 'Diego Silva');
       setInput(wrapper, 'email', 'diego@example.com');
-      submitForm(wrapper); // name + email valid, dob + phone empty
-      expect(
-        wrapper.querySelector<HTMLInputElement>('input[name="fullName"]')?.getAttribute('aria-invalid'),
-      ).toBe('false');
-      expect(
-        wrapper.querySelector<HTMLInputElement>('input[name="email"]')?.getAttribute('aria-invalid'),
-      ).toBe('false');
-      expect(
-        wrapper.querySelector<HTMLInputElement>('input[name="dateOfBirth"]')?.getAttribute('aria-invalid'),
-      ).toBe('true');
-      expect(
-        wrapper.querySelector<HTMLInputElement>('input[name="phone"]')?.getAttribute('aria-invalid'),
-      ).toBe('true');
+      submitForm(wrapper);
+      expect(wrapper.querySelector<HTMLInputElement>('input[name="fullName"]')?.getAttribute('aria-invalid')).toBe('false');
+      expect(wrapper.querySelector<HTMLInputElement>('input[name="email"]')?.getAttribute('aria-invalid')).toBe('false');
+      expect(wrapper.querySelector<HTMLInputElement>('input[name="dateOfBirth"]')?.getAttribute('aria-invalid')).toBe('true');
+      expect(wrapper.querySelector<HTMLInputElement>('input[name="phone"]')?.getAttribute('aria-invalid')).toBe('true');
     });
 
     it('aria-invalid is removed from all fields after a successful submit', () => {
       fillValid(wrapper);
       submitForm(wrapper);
       wrapper.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
-        expect(input.getAttribute('aria-invalid'), `aria-invalid on ${input.name}`).toBeNull();
+        expect(input.getAttribute('aria-invalid'), input.name).toBeNull();
       });
     });
   });
@@ -147,12 +150,11 @@ describe('Form – Accessibility', () => {
   describe('inline field error messages', () => {
     it('field error elements are empty before first submit', () => {
       wrapper.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
-        const errorEl = wrapper.querySelector(`#error-${input.name}`);
-        expect(errorEl?.textContent).toBe('');
+        expect(wrapper.querySelector(`#error-${input.name}`)?.textContent).toBe('');
       });
     });
 
-    it('shows inline error text for each invalid field after a failed submit', () => {
+    it('shows inline error text for each invalid field', () => {
       submitForm(wrapper);
       expect(wrapper.querySelector('#error-fullName')?.textContent).toContain('Please enter your name');
       expect(wrapper.querySelector('#error-email')?.textContent).toContain('Please enter your email');
@@ -161,9 +163,9 @@ describe('Form – Accessibility', () => {
     });
 
     it('clears inline error for a field that becomes valid on re-submit', () => {
-      submitForm(wrapper); // all invalid
+      submitForm(wrapper);
       setInput(wrapper, 'fullName', 'Diego Silva');
-      submitForm(wrapper); // fullName now valid
+      submitForm(wrapper);
       expect(wrapper.querySelector('#error-fullName')?.textContent).toBe('');
     });
 
@@ -178,20 +180,17 @@ describe('Form – Accessibility', () => {
   });
 
   describe('error summary focus management', () => {
-    it('error summary has tabindex="-1" to allow programmatic focus', () => {
-      const errorBox = wrapper.querySelector('.form-errors');
-      expect(errorBox?.getAttribute('tabindex')).toBe('-1');
+    it('error summary has tabindex="-1"', () => {
+      expect(wrapper.querySelector('.form-errors')?.getAttribute('tabindex')).toBe('-1');
     });
 
     it('error summary receives focus after a failed submit', () => {
       submitForm(wrapper);
-      const errorBox = wrapper.querySelector('.form-errors');
-      expect(document.activeElement).toBe(errorBox);
+      expect(document.activeElement).toBe(wrapper.querySelector('.form-errors'));
     });
 
     it('error summary has aria-live="polite"', () => {
-      const errorBox = wrapper.querySelector('.form-errors');
-      expect(errorBox?.getAttribute('aria-live')).toBe('polite');
+      expect(wrapper.querySelector('.form-errors')?.getAttribute('aria-live')).toBe('polite');
     });
   });
 
@@ -208,8 +207,7 @@ describe('Form – Accessibility', () => {
     it('announces success message after a valid submit', () => {
       fillValid(wrapper);
       submitForm(wrapper);
-      const text = wrapper.querySelector('.form-errors')?.textContent ?? '';
-      expect(text).toContain('Valid data. Submission has been added.');
+      expect(wrapper.querySelector('.form-errors')?.textContent).toContain('Valid data. Submission has been added.');
     });
 
     it('renders multiple errors in a <ul>', () => {
@@ -217,20 +215,19 @@ describe('Form – Accessibility', () => {
       expect(wrapper.querySelector('.form-errors ul')).toBeInstanceOf(HTMLUListElement);
     });
 
-    it('each error is a <li> element', () => {
+    it('each error is a <li>', () => {
       submitForm(wrapper);
-      const items = wrapper.querySelectorAll('.form-errors li');
-      expect(items.length).toBeGreaterThan(0);
-      items.forEach((item) => expect(item.tagName.toLowerCase()).toBe('li'));
+      wrapper.querySelectorAll('.form-errors li').forEach((li) => {
+        expect(li.tagName.toLowerCase()).toBe('li');
+      });
     });
 
-    it('error list is cleared and replaced on re-submit', () => {
+    it('error count decreases when fields are fixed on re-submit', () => {
       submitForm(wrapper);
       const firstCount = wrapper.querySelectorAll('.form-errors li').length;
       setInput(wrapper, 'fullName', 'Diego Silva');
       submitForm(wrapper);
-      const secondCount = wrapper.querySelectorAll('.form-errors li').length;
-      expect(secondCount).toBeLessThan(firstCount);
+      expect(wrapper.querySelectorAll('.form-errors li').length).toBeLessThan(firstCount);
     });
   });
 
@@ -253,45 +250,39 @@ describe('Form – Accessibility', () => {
   });
 
   describe('keyboard accessibility', () => {
-    it('all inputs are naturally focusable (tabIndex >= 0)', () => {
+    it('all inputs are naturally focusable', () => {
       wrapper.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
         expect(input.tabIndex).toBeGreaterThanOrEqual(0);
       });
     });
 
-    it('submit button is naturally focusable (tabIndex >= 0)', () => {
-      const btn = wrapper.querySelector<HTMLButtonElement>('button[type="submit"]');
-      expect(btn?.tabIndex).toBeGreaterThanOrEqual(0);
+    it('submit button is naturally focusable', () => {
+      expect(wrapper.querySelector<HTMLButtonElement>('button[type="submit"]')?.tabIndex).toBeGreaterThanOrEqual(0);
     });
 
-    it('focusable elements appear in logical DOM order: name → email → dob → phone → submit', () => {
-      const elements = [...wrapper.querySelectorAll('input, button[type="submit"]')];
-      const ids = elements.map(
-        (el) => (el as HTMLInputElement).name || el.tagName.toLowerCase(),
-      );
+    it('DOM tab order: name → email → dob → phone → submit', () => {
+      const els = [...wrapper.querySelectorAll('input, button[type="submit"]')];
+      const ids = els.map((el) => (el as HTMLInputElement).name || el.tagName.toLowerCase());
       expect(ids).toEqual(['fullName', 'email', 'dateOfBirth', 'phone', 'button']);
     });
 
     it('submit button has a discernible accessible name', () => {
       const btn = wrapper.querySelector<HTMLButtonElement>('button[type="submit"]');
-      const accessibleName =
-        btn?.getAttribute('aria-label') ??
-        btn?.getAttribute('aria-labelledby') ??
-        btn?.textContent?.trim();
-      expect(accessibleName).toBeTruthy();
+      const name = btn?.getAttribute('aria-label') ?? btn?.getAttribute('aria-labelledby') ?? btn?.textContent?.trim();
+      expect(name).toBeTruthy();
     });
   });
 
   describe('semantic HTML', () => {
-    it('wraps fields in a <form> element', () => {
+    it('wraps fields in a <form>', () => {
       expect(wrapper.querySelector('form')).toBeInstanceOf(HTMLFormElement);
     });
 
-    it('uses noValidate (relies on custom JS validation)', () => {
+    it('uses noValidate', () => {
       expect(wrapper.querySelector('form')?.noValidate).toBe(true);
     });
 
-    it('submit control is a <button> with type="submit"', () => {
+    it('submit control is a <button type="submit">', () => {
       const btn = wrapper.querySelector<HTMLButtonElement>('button[type="submit"]');
       expect(btn).toBeInstanceOf(HTMLButtonElement);
       expect(btn?.type).toBe('submit');

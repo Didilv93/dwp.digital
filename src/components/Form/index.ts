@@ -1,12 +1,5 @@
 import './style.sass';
-import {
-  validateForm,
-  validateName,
-  validateEmail,
-  validateDateOfBirth,
-  validatePhone,
-  ValidationResult,
-} from '../../utils/validation';
+import { validateName, validateEmail, validateDateOfBirth, validatePhone } from '../../utils/validation';
 
 export interface SubmissionData {
   name: string;
@@ -17,152 +10,85 @@ export interface SubmissionData {
 
 export type SubmitHandler = (data: SubmissionData) => void;
 
-interface FormComponent {
-  element: HTMLElement;
+const FIELD_VALIDATORS: Array<{
+  inputName: string;
+  getVal: (s: SubmissionData) => string;
+  validate: (value: string) => string | true;
+}> = [
+  { inputName: 'fullName',    getVal: (s) => s.name,        validate: validateName },
+  { inputName: 'email',       getVal: (s) => s.email,       validate: validateEmail },
+  { inputName: 'dateOfBirth', getVal: (s) => s.dateOfBirth, validate: validateDateOfBirth },
+  { inputName: 'phone',       getVal: (s) => s.phone,       validate: validatePhone },
+];
+
+function getInput(form: HTMLFormElement, name: string): HTMLInputElement {
+  return form.elements.namedItem(name) as HTMLInputElement;
 }
 
-interface FieldParts {
-  field: HTMLDivElement;
-  input: HTMLInputElement;
-  errorEl: HTMLSpanElement;
+function getErrorEl(form: HTMLFormElement, name: string): HTMLSpanElement {
+  return form.querySelector<HTMLSpanElement>(`#error-${name}`)!;
 }
 
-function createField(
-  labelText: string,
-  inputType: string,
-  inputName: string,
-  placeholder: string,
-): FieldParts {
-  const field = document.createElement('div');
-  field.className = 'form-field';
-
-  const label = document.createElement('label');
-  label.htmlFor = inputName;
-  label.textContent = labelText;
-
-  const errorEl = document.createElement('span');
-  errorEl.id = `error-${inputName}`;
-  errorEl.className = 'field-error';
-
-  const input = document.createElement('input');
-  input.type = inputType;
-  input.id = inputName;
-  input.name = inputName;
-  input.placeholder = placeholder;
-  input.autocomplete = 'off';
-  input.setAttribute('aria-describedby', `error-${inputName}`);
-
-  field.append(label, errorEl, input);
-  return { field, input, errorEl };
+function applyFieldState(input: HTMLInputElement, errorEl: HTMLSpanElement, result: string | true): void {
+  const invalid = result !== true;
+  input.setAttribute('aria-invalid', String(invalid));
+  errorEl.textContent = invalid ? result : '';
 }
 
-export function createForm(onSubmit: SubmitHandler): FormComponent {
-  const form = document.createElement('form');
-  form.className = 'contact-form';
-  form.noValidate = true;
+function showSummary(errorBox: HTMLElement, errors: string[]): void {
+  errorBox.innerHTML = '';
+  errorBox.classList.toggle('has-error', errors.length > 0);
 
-  const errorBox = document.createElement('div');
-  errorBox.className = 'form-errors';
-  errorBox.setAttribute('aria-live', 'polite');
-  errorBox.setAttribute('tabindex', '-1');
-
-  const { field: nameField, input: nameInput, errorEl: nameErrorEl } = createField(
-    'Full name', 'text', 'fullName', 'Ex. John Doe',
-  );
-  const { field: emailField, input: emailInput, errorEl: emailErrorEl } = createField(
-    'Email', 'email', 'email', 'Ex. name@example.com',
-  );
-  const { field: dobField, input: dobInput, errorEl: dobErrorEl } = createField(
-    'Date of birth', 'date', 'dateOfBirth', 'YYYY-MM-DD',
-  );
-  const { field: phoneField, input: phoneInput, errorEl: phoneErrorEl } = createField(
-    'Phone number', 'tel', 'phone', 'Ex. +44 7123 456 789',
-  );
-
-  const submitButton = document.createElement('button');
-  submitButton.type = 'submit';
-  submitButton.className = 'submit-button';
-  submitButton.textContent = 'Submit';
-
-  form.append(errorBox, nameField, emailField, dobField, phoneField, submitButton);
-
-  function buildSubmission() {
-    return {
-      name: nameInput.value.trim(),
-      email: emailInput.value.trim(),
-      dateOfBirth: dobInput.value,
-      phone: phoneInput.value.trim(),
-    };
-  }
-
-  function applyFieldError(
-    input: HTMLInputElement,
-    errorEl: HTMLSpanElement,
-    check: string | true,
-  ) {
-    const invalid = check !== true;
-    input.setAttribute('aria-invalid', String(invalid));
-    errorEl.textContent = invalid ? check : '';
-  }
-
-  function clearFieldErrors() {
-    [nameInput, emailInput, dobInput, phoneInput].forEach((input) =>
-      input.removeAttribute('aria-invalid'),
-    );
-    [nameErrorEl, emailErrorEl, dobErrorEl, phoneErrorEl].forEach((el) => {
-      el.textContent = '';
+  if (errors.length > 0) {
+    const ul = document.createElement('ul');
+    ul.className = 'error-list';
+    errors.forEach((msg) => {
+      const li = document.createElement('li');
+      li.textContent = msg;
+      ul.appendChild(li);
     });
+    errorBox.appendChild(ul);
+    errorBox.focus();
+    return;
   }
 
-  function showSummary(result: ValidationResult) {
-    errorBox.innerHTML = '';
-    errorBox.classList.toggle('has-error', !result.valid);
+  const p = document.createElement('p');
+  p.className = 'success-message';
+  p.textContent = 'Valid data. Submission has been added.';
+  errorBox.appendChild(p);
+}
 
-    if (!result.valid) {
-      const list = document.createElement('ul');
-      list.className = 'error-list';
-      result.messages.forEach((message) => {
-        const item = document.createElement('li');
-        item.textContent = message;
-        list.appendChild(item);
-      });
-      errorBox.appendChild(list);
-      errorBox.focus();
-      return;
-    }
-
-    const success = document.createElement('p');
-    success.className = 'success-message';
-    success.textContent = 'Valid data. Submission has been added.';
-    errorBox.appendChild(success);
-  }
+export function initForm(form: HTMLFormElement, onSubmit: SubmitHandler): void {
+  const errorBox = form.querySelector<HTMLElement>('.form-errors')!;
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    const submission = buildSubmission();
+    const submission: SubmissionData = {
+      name:        getInput(form, 'fullName').value.trim(),
+      email:       getInput(form, 'email').value.trim(),
+      dateOfBirth: getInput(form, 'dateOfBirth').value,
+      phone:       getInput(form, 'phone').value.trim(),
+    };
 
-    const nameCheck = validateName(submission.name);
-    const emailCheck = validateEmail(submission.email);
-    const dobCheck = validateDateOfBirth(submission.dateOfBirth);
-    const phoneCheck = validatePhone(submission.phone);
+    const errors = FIELD_VALIDATORS
+      .map(({ inputName, getVal, validate }) => {
+        const result = validate(getVal(submission));
+        applyFieldState(getInput(form, inputName), getErrorEl(form, inputName), result);
+        return result;
+      })
+      .filter((r): r is string => r !== true);
 
-    applyFieldError(nameInput, nameErrorEl, nameCheck);
-    applyFieldError(emailInput, emailErrorEl, emailCheck);
-    applyFieldError(dobInput, dobErrorEl, dobCheck);
-    applyFieldError(phoneInput, phoneErrorEl, phoneCheck);
+    showSummary(errorBox, errors);
 
-    const validation = validateForm(submission);
-    showSummary(validation);
+    if (errors.length > 0) return;
 
-    if (!validation.valid) {
-      return;
-    }
+    FIELD_VALIDATORS.forEach(({ inputName }) => {
+      getInput(form, inputName).removeAttribute('aria-invalid');
+      getErrorEl(form, inputName).textContent = '';
+    });
 
-    clearFieldErrors();
     onSubmit(submission);
     form.reset();
   });
-
-  return { element: form };
 }

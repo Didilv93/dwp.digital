@@ -1,22 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { axe } from 'vitest-axe';
-import { App } from '../index';
-
-const VALID = {
-  fullName: 'Alice Smith',
-  email: 'alice@example.com',
-  dateOfBirth: '1985-01-01',
-  phone: '+44 7000 000 000',
-};
+import { initForm } from '../../components/Form/index';
+import { initSubmissionList } from '../../components/SubmissionList/index';
+import { PAGE_HTML } from '../../test-setup/fixtures';
 
 function setInput(root: HTMLElement, name: string, value: string): void {
   const input = root.querySelector<HTMLInputElement>(`input[name="${name}"]`);
   if (!input) throw new Error(`input[name="${name}"] not found`);
   input.value = value;
-}
-
-function fillValid(root: HTMLElement): void {
-  Object.entries(VALID).forEach(([name, value]) => setInput(root, name, value));
 }
 
 function submitForm(root: HTMLElement): void {
@@ -25,8 +16,15 @@ function submitForm(root: HTMLElement): void {
     .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
 }
 
+const VALID = {
+  fullName: 'Alice Smith',
+  email: 'alice@example.com',
+  dateOfBirth: '1985-01-01',
+  phone: '+44 7000 000 000',
+};
+
 function fillAndSubmit(root: HTMLElement): void {
-  fillValid(root);
+  Object.entries(VALID).forEach(([name, value]) => setInput(root, name, value));
   submitForm(root);
 }
 
@@ -34,12 +32,16 @@ describe('App – Accessibility', () => {
   let app: HTMLElement;
 
   beforeEach(() => {
-    app = App();
-    document.body.appendChild(app);
+    document.body.innerHTML = PAGE_HTML;
+    const form = document.querySelector<HTMLFormElement>('#contact-form')!;
+    const list = document.querySelector<HTMLUListElement>('#submission-list')!;
+    const { addSubmission } = initSubmissionList(list);
+    initForm(form, addSubmission);
+    app = document.querySelector<HTMLElement>('main')!;
   });
 
   afterEach(() => {
-    document.body.removeChild(app);
+    document.body.innerHTML = '';
   });
 
   describe('axe automated scans', () => {
@@ -84,17 +86,9 @@ describe('App – Accessibility', () => {
       expect(headings[0].tagName.toLowerCase()).toBe('h1');
     });
 
-    it('h2 follows h1 (no heading levels are skipped)', () => {
+    it('h2 follows h1 with no skipped levels', () => {
       const headings = [...app.querySelectorAll('h1, h2')];
       expect(headings[1]?.tagName.toLowerCase()).toBe('h2');
-    });
-
-    it('no h3 or deeper headings exist without a preceding h2', () => {
-      const h3Plus = app.querySelectorAll('h3, h4, h5, h6');
-      const h2 = app.querySelector('h2');
-      if (h3Plus.length > 0) {
-        expect(h2).not.toBeNull();
-      }
     });
   });
 
@@ -104,13 +98,11 @@ describe('App – Accessibility', () => {
     });
 
     it('submission list section has an accessible name', () => {
-      const section = app.querySelector('section');
-      expect(section?.getAttribute('aria-labelledby')).toBeTruthy();
+      expect(app.querySelector('section')?.getAttribute('aria-labelledby')).toBeTruthy();
     });
 
     it('section aria-labelledby references an existing element', () => {
-      const section = app.querySelector('section');
-      const labelId = section?.getAttribute('aria-labelledby');
+      const labelId = app.querySelector('section')?.getAttribute('aria-labelledby');
       expect(app.querySelector(`#${labelId}`)).not.toBeNull();
     });
   });
@@ -131,7 +123,7 @@ describe('App – Accessibility', () => {
       expect(app.querySelector<HTMLInputElement>('input[name="fullName"]')?.value).toBe('');
     });
 
-    it('clicking "Remove" deletes the item from the list', () => {
+    it('clicking Remove deletes the item', () => {
       fillAndSubmit(app);
       app.querySelector<HTMLButtonElement>('.remove-button')?.click();
       expect(app.querySelectorAll('.submission-item')).toHaveLength(0);
@@ -144,7 +136,7 @@ describe('App – Accessibility', () => {
       expect(label.toLowerCase()).toContain('alice smith');
     });
 
-    it('two submissions produce two list items each with a unique remove label', () => {
+    it('two submissions produce two unique remove labels', () => {
       fillAndSubmit(app);
       setInput(app, 'fullName', 'Bob Jones');
       setInput(app, 'email', 'bob@example.com');

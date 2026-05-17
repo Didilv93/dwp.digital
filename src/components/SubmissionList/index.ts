@@ -1,60 +1,43 @@
 import './style.sass';
 import type { SubmissionData } from '../Form/index';
 
-interface SubmissionListComponent {
-  element: HTMLElement;
-  addSubmission: (data: SubmissionData) => void;
+const DATA_FIELDS: Array<keyof SubmissionData> = ['name', 'email', 'dateOfBirth', 'phone'];
+
+function buildItem(data: SubmissionData): HTMLLIElement {
+  const template = document.getElementById('submission-item-template') as HTMLTemplateElement | null;
+
+  let item: HTMLLIElement;
+
+  if (template) {
+    item = (template.content.cloneNode(true) as DocumentFragment).querySelector('li')!;
+  } else {
+    item = document.createElement('li');
+    item.className = 'submission-item';
+    item.innerHTML = `
+      <div class="submission-info">
+        <strong data-field="name"></strong>
+        <span data-field="email"></span>
+        <span data-field="dateOfBirth"></span>
+        <span data-field="phone"></span>
+      </div>
+      <button type="button" class="remove-button">Remove</button>`;
+  }
+
+  DATA_FIELDS.forEach((field) => {
+    item.querySelector<HTMLElement>(`[data-field="${field}"]`)!.textContent = data[field];
+  });
+
+  const btn = item.querySelector<HTMLButtonElement>('button')!;
+  btn.setAttribute('aria-label', `Remove submission for ${data.name}`);
+  btn.addEventListener('click', () => item.remove());
+
+  return item;
 }
 
-export function createSubmissionList(): SubmissionListComponent {
-  const container = document.createElement('section');
-  container.className = 'submission-list-shell';
-
-  const title = document.createElement('h2');
-  title.id = 'submission-list-title';
-  title.textContent = 'Recent submissions';
-
-  const list = document.createElement('ul');
-  list.className = 'submission-list';
-
-  container.setAttribute('aria-labelledby', 'submission-list-title');
-  container.append(title, list);
-
-  function createItem(data: SubmissionData) {
-    const item = document.createElement('li');
-    item.className = 'submission-item';
-
-    const summary = document.createElement('div');
-    summary.className = 'submission-info';
-
-    const nameEl = document.createElement('strong');
-    nameEl.textContent = data.name;
-
-    const emailEl = document.createElement('span');
-    emailEl.textContent = data.email;
-
-    const dobEl = document.createElement('span');
-    dobEl.textContent = data.dateOfBirth;
-
-    const phoneEl = document.createElement('span');
-    phoneEl.textContent = data.phone;
-
-    summary.append(nameEl, emailEl, dobEl, phoneEl);
-
-    const removeButton = document.createElement('button');
-    removeButton.type = 'button';
-    removeButton.className = 'remove-button';
-    removeButton.textContent = 'Remove';
-    removeButton.setAttribute('aria-label', `Remove submission for ${data.name}`);
-    removeButton.addEventListener('click', () => item.remove());
-
-    item.append(summary, removeButton);
-    return item;
-  }
-
-  function addSubmission(data: SubmissionData) {
-    list.appendChild(createItem(data));
-  }
-
-  return { element: container, addSubmission };
+export function initSubmissionList(list: HTMLUListElement): {
+  addSubmission: (data: SubmissionData) => void;
+} {
+  return {
+    addSubmission: (data) => list.appendChild(buildItem(data)),
+  };
 }

@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { axe } from 'vitest-axe';
 import { initForm } from '../index';
-import { FORM_HTML } from '../../../test-setup/fixtures';
 
 function setInput(root: HTMLElement, name: string, value: string): void {
   const input = root.querySelector<HTMLInputElement>(`input[name="${name}"]`);
@@ -16,8 +15,8 @@ function submitForm(root: HTMLElement): void {
 }
 
 const VALID = {
-  fullName: 'Name Example',
-  email: 'email@example.com',
+  fullName: 'Diego Silva',
+  email: 'diego@example.com',
   dateOfBirth: '1990-05-13',
   phone: '+44 7123 456 789',
 };
@@ -31,9 +30,8 @@ describe('Form – Accessibility', () => {
 
   beforeEach(() => {
     wrapper = document.createElement('div');
-    wrapper.innerHTML = FORM_HTML;
     document.body.appendChild(wrapper);
-    initForm(wrapper.querySelector('form')!, () => {});
+    initForm(wrapper, () => {});
   });
 
   afterEach(() => {
@@ -129,8 +127,8 @@ describe('Form – Accessibility', () => {
     });
 
     it('valid fields get aria-invalid="false" on partial submit', () => {
-      setInput(wrapper, 'fullName', 'Name Example');
-      setInput(wrapper, 'email', 'email@example.com');
+      setInput(wrapper, 'fullName', 'Diego Silva');
+      setInput(wrapper, 'email', 'diego@example.com');
       submitForm(wrapper);
       expect(wrapper.querySelector<HTMLInputElement>('input[name="fullName"]')?.getAttribute('aria-invalid')).toBe('false');
       expect(wrapper.querySelector<HTMLInputElement>('input[name="email"]')?.getAttribute('aria-invalid')).toBe('false');
@@ -164,7 +162,7 @@ describe('Form – Accessibility', () => {
 
     it('clears inline error for a field that becomes valid on re-submit', () => {
       submitForm(wrapper);
-      setInput(wrapper, 'fullName', 'Name Example');
+      setInput(wrapper, 'fullName', 'Diego Silva');
       submitForm(wrapper);
       expect(wrapper.querySelector('#error-fullName')?.textContent).toBe('');
     });
@@ -225,7 +223,7 @@ describe('Form – Accessibility', () => {
     it('error count decreases when fields are fixed on re-submit', () => {
       submitForm(wrapper);
       const firstCount = wrapper.querySelectorAll('.form-errors li').length;
-      setInput(wrapper, 'fullName', 'Name Example');
+      setInput(wrapper, 'fullName', 'Diego Silva');
       submitForm(wrapper);
       expect(wrapper.querySelectorAll('.form-errors li').length).toBeLessThan(firstCount);
     });

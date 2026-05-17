@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { initSubmissionList } from '../index';
-import { LIST_HTML } from '../../../test-setup/fixtures';
 
 describe('SubmissionList', () => {
   let wrapper: HTMLElement;
@@ -8,10 +7,8 @@ describe('SubmissionList', () => {
 
   beforeEach(() => {
     wrapper = document.createElement('div');
-    wrapper.innerHTML = LIST_HTML;
     document.body.appendChild(wrapper);
-    const list = wrapper.querySelector<HTMLUListElement>('#submission-list')!;
-    ({ addSubmission } = initSubmissionList(list));
+    ({ addSubmission } = initSubmissionList(wrapper));
   });
 
   afterEach(() => {
@@ -20,20 +17,20 @@ describe('SubmissionList', () => {
 
   it('adds a submission to the list', () => {
     addSubmission({
-      name: 'Name Example',
-      email: 'email@example.com',
+      name: 'Diego Silva',
+      email: 'diego@example.com',
       dateOfBirth: '1990-05-13',
       phone: '+44 7123 456 789',
     });
 
     expect(wrapper.querySelectorAll('li')).toHaveLength(1);
-    expect(wrapper.textContent).toContain('Name Example');
+    expect(wrapper.textContent).toContain('Diego Silva');
   });
 
   it('removes a submission when the remove button is clicked', () => {
     addSubmission({
-      name: 'Name Example',
-      email: 'email@example.com',
+      name: 'Diego Silva',
+      email: 'diego@example.com',
       dateOfBirth: '1990-05-13',
       phone: '+44 7123 456 789',
     });

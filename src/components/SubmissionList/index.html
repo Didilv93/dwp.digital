@@ -1,0 +1,16 @@
+<template id="submission-item-template">
+  <li class="submission-item">
+    <div class="submission-info">
+      <strong data-field="name"></strong>
+      <span data-field="email"></span>
+      <span data-field="dateOfBirth"></span>
+      <span data-field="phone"></span>
+    </div>
+    <button type="button" class="remove-button">Remove</button>
+  </li>
+</template>
+
+<section class="submission-list-shell" aria-labelledby="submission-list-title">
+  <h2 id="submission-list-title">Recent submissions</h2>
+  <ul id="submission-list" class="submission-list"></ul>
+</section>

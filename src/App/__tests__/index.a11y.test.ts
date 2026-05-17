@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { axe } from 'vitest-axe';
 import { initForm } from '../../components/Form/index';
 import { initSubmissionList } from '../../components/SubmissionList/index';
-import { PAGE_HTML } from '../../test-setup/fixtures';
+import { PAGE_SHELL_HTML } from '../../test-setup/fixtures';
 
 function setInput(root: HTMLElement, name: string, value: string): void {
   const input = root.querySelector<HTMLInputElement>(`input[name="${name}"]`);
@@ -32,11 +32,11 @@ describe('App – Accessibility', () => {
   let app: HTMLElement;
 
   beforeEach(() => {
-    document.body.innerHTML = PAGE_HTML;
-    const form = document.querySelector<HTMLFormElement>('#contact-form')!;
-    const list = document.querySelector<HTMLUListElement>('#submission-list')!;
-    const { addSubmission } = initSubmissionList(list);
-    initForm(form, addSubmission);
+    document.body.innerHTML = PAGE_SHELL_HTML;
+    const formMount = document.querySelector<HTMLElement>('#form-mount')!;
+    const listMount = document.querySelector<HTMLElement>('#list-mount')!;
+    const { addSubmission } = initSubmissionList(listMount);
+    initForm(formMount, addSubmission);
     app = document.querySelector<HTMLElement>('main')!;
   });
 

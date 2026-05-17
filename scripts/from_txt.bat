@@ -1,8 +1,9 @@
 @echo off
-setlocal EnableDelayedExpansion
+setlocal
 cd /d "%~dp0\.."
 
 echo === Restoring project files from .txt ===
+echo Working dir: %CD%
 echo.
 
 set OK=0
@@ -42,8 +43,8 @@ call :restore "src\utils\validation.ts.txt"
 call :restore "src\utils\__tests__\validation.test.ts.txt"
 
 echo.
-echo Restored: %OK% files
-echo Missing:  %MISSING% files
+echo Restored : %OK%
+echo Missing  : %MISSING%
 echo.
 pause
 goto :eof
@@ -51,10 +52,10 @@ goto :eof
 :restore
   if exist "%~1" (
     for %%F in ("%~1") do ren "%~1" "%%~nF"
-    echo   [OK] %~1 -^> %~dpn1
+    echo   [OK]      %~1
     set /a OK+=1
   ) else (
-    echo   [!!] MISSING: %~1
+    echo   [MISSING] %~1
     set /a MISSING+=1
   )
 goto :eof

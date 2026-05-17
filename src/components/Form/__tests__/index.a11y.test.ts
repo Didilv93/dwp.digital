@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { axe } from 'vitest-axe';
 import { initForm } from '../index';
+import { FORM_HTML } from '../../../test-setup/fixtures';
 
 function setInput(root: HTMLElement, name: string, value: string): void {
   const input = root.querySelector<HTMLInputElement>(`input[name="${name}"]`);
@@ -30,6 +31,7 @@ describe('Form – Accessibility', () => {
 
   beforeEach(() => {
     wrapper = document.createElement('div');
+    wrapper.innerHTML = FORM_HTML;
     document.body.appendChild(wrapper);
     initForm(wrapper, () => {});
   });

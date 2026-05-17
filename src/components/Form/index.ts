@@ -1,5 +1,4 @@
 import './style.sass';
-import formHTML from './index.html?raw';
 import { validateName, validateEmail, validateDateOfBirth, validatePhone } from '../../utils/validation';
 
 export interface SubmissionData {
@@ -60,7 +59,6 @@ function showSummary(errorBox: HTMLElement, errors: string[]): void {
 }
 
 export function initForm(mount: HTMLElement, onSubmit: SubmitHandler): void {
-  mount.innerHTML = formHTML;
   const form = mount.querySelector<HTMLFormElement>('form')!;
   const errorBox = form.querySelector<HTMLElement>('.form-errors')!;
 

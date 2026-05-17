@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { axe } from 'vitest-axe';
 import { initSubmissionList } from '../index';
 import type { SubmissionData } from '../../Form/index';
+import { LIST_HTML } from '../../../test-setup/fixtures';
 
 const ALICE: SubmissionData = {
   name: 'Alice Smith',
@@ -23,6 +24,7 @@ describe('SubmissionList – Accessibility', () => {
 
   beforeEach(() => {
     wrapper = document.createElement('div');
+    wrapper.innerHTML = LIST_HTML;
     document.body.appendChild(wrapper);
     ({ addSubmission } = initSubmissionList(wrapper));
   });

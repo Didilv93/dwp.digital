@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { initSubmissionList } from '../index';
+import { LIST_HTML } from '../../../test-setup/fixtures';
 
 describe('SubmissionList', () => {
   let wrapper: HTMLElement;
@@ -7,6 +8,7 @@ describe('SubmissionList', () => {
 
   beforeEach(() => {
     wrapper = document.createElement('div');
+    wrapper.innerHTML = LIST_HTML;
     document.body.appendChild(wrapper);
     ({ addSubmission } = initSubmissionList(wrapper));
   });

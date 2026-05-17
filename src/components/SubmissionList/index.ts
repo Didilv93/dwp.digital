@@ -1,5 +1,4 @@
 import './style.sass';
-import listHTML from './index.html?raw';
 import type { SubmissionData } from '../Form/index';
 
 const DATA_FIELDS: Array<keyof SubmissionData> = ['name', 'email', 'dateOfBirth', 'phone'];
@@ -45,7 +44,6 @@ function buildItem(
 export function initSubmissionList(mount: HTMLElement): {
   addSubmission: (data: SubmissionData) => void;
 } {
-  mount.innerHTML = listHTML;
   const list = mount.querySelector<HTMLUListElement>('#submission-list')!;
   const template = mount.querySelector<HTMLTemplateElement>('#submission-item-template')!;
   const statusEl = mount.querySelector<HTMLElement>('.list-status')!;

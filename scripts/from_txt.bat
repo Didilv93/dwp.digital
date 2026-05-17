@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal EnableExtensions
 cd /d "%~dp0\.."
 
 echo === Restoring project files from .txt ===
@@ -9,53 +9,42 @@ echo.
 set OK=0
 set MISSING=0
 
-call :restore ".eslintrc.cjs.txt"
-call :restore ".gitignore.txt"
-call :restore "eslint.config.cjs.txt"
-call :restore "IMPROVEMENTS.md.txt"
-call :restore "index.html.txt"
-call :restore "package.json.txt"
-call :restore "package-lock.json.txt"
-call :restore "public\robots.txt.txt"
-call :restore "README.md.txt"
-call :restore "REQUIREMENTS.md.txt"
-call :restore "tsconfig.json.txt"
-call :restore "vite.config.ts.txt"
-call :restore "src\env.d.ts.txt"
-call :restore "src\main.ts.txt"
-call :restore "src\vite-env.d.ts.txt"
-call :restore "src\App\style.sass.txt"
-call :restore "src\App\__tests__\index.a11y.test.ts.txt"
-call :restore "src\components\Form\index.html.txt"
-call :restore "src\components\Form\index.ts.txt"
-call :restore "src\components\Form\style.sass.txt"
-call :restore "src\components\Form\__tests__\index.a11y.test.ts.txt"
-call :restore "src\components\SubmissionList\index.html.txt"
-call :restore "src\components\SubmissionList\index.ts.txt"
-call :restore "src\components\SubmissionList\style.sass.txt"
-call :restore "src\components\SubmissionList\__tests__\index.a11y.test.ts.txt"
-call :restore "src\components\SubmissionList\__tests__\index.test.ts.txt"
-call :restore "src\styles\theme.sass.txt"
-call :restore "src\test-setup\a11y.ts.txt"
-call :restore "src\test-setup\fixtures.ts.txt"
-call :restore "src\test-setup\vitest-axe.d.ts.txt"
-call :restore "src\utils\validation.ts.txt"
-call :restore "src\utils\__tests__\validation.test.ts.txt"
+if exist ".eslintrc.cjs.txt"                                                          (ren ".eslintrc.cjs.txt"                                                          ".eslintrc.cjs"              & set /a OK+=1 & echo [OK]      .eslintrc.cjs.txt)                                                          else (set /a MISSING+=1 & echo [MISSING] .eslintrc.cjs.txt)
+if exist ".gitignore.txt"                                                             (ren ".gitignore.txt"                                                             ".gitignore"                 & set /a OK+=1 & echo [OK]      .gitignore.txt)                                                             else (set /a MISSING+=1 & echo [MISSING] .gitignore.txt)
+if exist "eslint.config.cjs.txt"                                                      (ren "eslint.config.cjs.txt"                                                      "eslint.config.cjs"          & set /a OK+=1 & echo [OK]      eslint.config.cjs.txt)                                                      else (set /a MISSING+=1 & echo [MISSING] eslint.config.cjs.txt)
+if exist "IMPROVEMENTS.md.txt"                                                        (ren "IMPROVEMENTS.md.txt"                                                        "IMPROVEMENTS.md"            & set /a OK+=1 & echo [OK]      IMPROVEMENTS.md.txt)                                                        else (set /a MISSING+=1 & echo [MISSING] IMPROVEMENTS.md.txt)
+if exist "index.html.txt"                                                             (ren "index.html.txt"                                                             "index.html"                 & set /a OK+=1 & echo [OK]      index.html.txt)                                                             else (set /a MISSING+=1 & echo [MISSING] index.html.txt)
+if exist "package.json.txt"                                                           (ren "package.json.txt"                                                           "package.json"               & set /a OK+=1 & echo [OK]      package.json.txt)                                                           else (set /a MISSING+=1 & echo [MISSING] package.json.txt)
+if exist "package-lock.json.txt"                                                      (ren "package-lock.json.txt"                                                      "package-lock.json"          & set /a OK+=1 & echo [OK]      package-lock.json.txt)                                                      else (set /a MISSING+=1 & echo [MISSING] package-lock.json.txt)
+if exist "public\robots.txt.txt"                                                      (ren "public\robots.txt.txt"                                                      "robots.txt"                 & set /a OK+=1 & echo [OK]      public\robots.txt.txt)                                                      else (set /a MISSING+=1 & echo [MISSING] public\robots.txt.txt)
+if exist "README.md.txt"                                                              (ren "README.md.txt"                                                              "README.md"                  & set /a OK+=1 & echo [OK]      README.md.txt)                                                              else (set /a MISSING+=1 & echo [MISSING] README.md.txt)
+if exist "REQUIREMENTS.md.txt"                                                        (ren "REQUIREMENTS.md.txt"                                                        "REQUIREMENTS.md"            & set /a OK+=1 & echo [OK]      REQUIREMENTS.md.txt)                                                        else (set /a MISSING+=1 & echo [MISSING] REQUIREMENTS.md.txt)
+if exist "tsconfig.json.txt"                                                          (ren "tsconfig.json.txt"                                                          "tsconfig.json"              & set /a OK+=1 & echo [OK]      tsconfig.json.txt)                                                          else (set /a MISSING+=1 & echo [MISSING] tsconfig.json.txt)
+if exist "vite.config.ts.txt"                                                         (ren "vite.config.ts.txt"                                                         "vite.config.ts"             & set /a OK+=1 & echo [OK]      vite.config.ts.txt)                                                         else (set /a MISSING+=1 & echo [MISSING] vite.config.ts.txt)
+if exist "src\env.d.ts.txt"                                                           (ren "src\env.d.ts.txt"                                                           "env.d.ts"                   & set /a OK+=1 & echo [OK]      src\env.d.ts.txt)                                                           else (set /a MISSING+=1 & echo [MISSING] src\env.d.ts.txt)
+if exist "src\main.ts.txt"                                                            (ren "src\main.ts.txt"                                                            "main.ts"                    & set /a OK+=1 & echo [OK]      src\main.ts.txt)                                                            else (set /a MISSING+=1 & echo [MISSING] src\main.ts.txt)
+if exist "src\vite-env.d.ts.txt"                                                      (ren "src\vite-env.d.ts.txt"                                                      "vite-env.d.ts"              & set /a OK+=1 & echo [OK]      src\vite-env.d.ts.txt)                                                      else (set /a MISSING+=1 & echo [MISSING] src\vite-env.d.ts.txt)
+if exist "src\App\style.sass.txt"                                                     (ren "src\App\style.sass.txt"                                                     "style.sass"                 & set /a OK+=1 & echo [OK]      src\App\style.sass.txt)                                                     else (set /a MISSING+=1 & echo [MISSING] src\App\style.sass.txt)
+if exist "src\App\__tests__\index.a11y.test.ts.txt"                                  (ren "src\App\__tests__\index.a11y.test.ts.txt"                                   "index.a11y.test.ts"         & set /a OK+=1 & echo [OK]      src\App\__tests__\index.a11y.test.ts.txt)                                  else (set /a MISSING+=1 & echo [MISSING] src\App\__tests__\index.a11y.test.ts.txt)
+if exist "src\components\Form\index.html.txt"                                         (ren "src\components\Form\index.html.txt"                                         "index.html"                 & set /a OK+=1 & echo [OK]      src\components\Form\index.html.txt)                                         else (set /a MISSING+=1 & echo [MISSING] src\components\Form\index.html.txt)
+if exist "src\components\Form\index.ts.txt"                                           (ren "src\components\Form\index.ts.txt"                                           "index.ts"                   & set /a OK+=1 & echo [OK]      src\components\Form\index.ts.txt)                                           else (set /a MISSING+=1 & echo [MISSING] src\components\Form\index.ts.txt)
+if exist "src\components\Form\style.sass.txt"                                         (ren "src\components\Form\style.sass.txt"                                         "style.sass"                 & set /a OK+=1 & echo [OK]      src\components\Form\style.sass.txt)                                         else (set /a MISSING+=1 & echo [MISSING] src\components\Form\style.sass.txt)
+if exist "src\components\Form\__tests__\index.a11y.test.ts.txt"                      (ren "src\components\Form\__tests__\index.a11y.test.ts.txt"                       "index.a11y.test.ts"         & set /a OK+=1 & echo [OK]      src\components\Form\__tests__\index.a11y.test.ts.txt)                      else (set /a MISSING+=1 & echo [MISSING] src\components\Form\__tests__\index.a11y.test.ts.txt)
+if exist "src\components\SubmissionList\index.html.txt"                               (ren "src\components\SubmissionList\index.html.txt"                               "index.html"                 & set /a OK+=1 & echo [OK]      src\components\SubmissionList\index.html.txt)                               else (set /a MISSING+=1 & echo [MISSING] src\components\SubmissionList\index.html.txt)
+if exist "src\components\SubmissionList\index.ts.txt"                                 (ren "src\components\SubmissionList\index.ts.txt"                                 "index.ts"                   & set /a OK+=1 & echo [OK]      src\components\SubmissionList\index.ts.txt)                                 else (set /a MISSING+=1 & echo [MISSING] src\components\SubmissionList\index.ts.txt)
+if exist "src\components\SubmissionList\style.sass.txt"                               (ren "src\components\SubmissionList\style.sass.txt"                               "style.sass"                 & set /a OK+=1 & echo [OK]      src\components\SubmissionList\style.sass.txt)                               else (set /a MISSING+=1 & echo [MISSING] src\components\SubmissionList\style.sass.txt)
+if exist "src\components\SubmissionList\__tests__\index.a11y.test.ts.txt"            (ren "src\components\SubmissionList\__tests__\index.a11y.test.ts.txt"             "index.a11y.test.ts"         & set /a OK+=1 & echo [OK]      src\components\SubmissionList\__tests__\index.a11y.test.ts.txt)            else (set /a MISSING+=1 & echo [MISSING] src\components\SubmissionList\__tests__\index.a11y.test.ts.txt)
+if exist "src\components\SubmissionList\__tests__\index.test.ts.txt"                 (ren "src\components\SubmissionList\__tests__\index.test.ts.txt"                  "index.test.ts"              & set /a OK+=1 & echo [OK]      src\components\SubmissionList\__tests__\index.test.ts.txt)                 else (set /a MISSING+=1 & echo [MISSING] src\components\SubmissionList\__tests__\index.test.ts.txt)
+if exist "src\styles\theme.sass.txt"                                                  (ren "src\styles\theme.sass.txt"                                                  "theme.sass"                 & set /a OK+=1 & echo [OK]      src\styles\theme.sass.txt)                                                  else (set /a MISSING+=1 & echo [MISSING] src\styles\theme.sass.txt)
+if exist "src\test-setup\a11y.ts.txt"                                                 (ren "src\test-setup\a11y.ts.txt"                                                 "a11y.ts"                    & set /a OK+=1 & echo [OK]      src\test-setup\a11y.ts.txt)                                                 else (set /a MISSING+=1 & echo [MISSING] src\test-setup\a11y.ts.txt)
+if exist "src\test-setup\fixtures.ts.txt"                                             (ren "src\test-setup\fixtures.ts.txt"                                             "fixtures.ts"                & set /a OK+=1 & echo [OK]      src\test-setup\fixtures.ts.txt)                                             else (set /a MISSING+=1 & echo [MISSING] src\test-setup\fixtures.ts.txt)
+if exist "src\test-setup\vitest-axe.d.ts.txt"                                        (ren "src\test-setup\vitest-axe.d.ts.txt"                                         "vitest-axe.d.ts"            & set /a OK+=1 & echo [OK]      src\test-setup\vitest-axe.d.ts.txt)                                        else (set /a MISSING+=1 & echo [MISSING] src\test-setup\vitest-axe.d.ts.txt)
+if exist "src\utils\validation.ts.txt"                                                (ren "src\utils\validation.ts.txt"                                                "validation.ts"              & set /a OK+=1 & echo [OK]      src\utils\validation.ts.txt)                                                else (set /a MISSING+=1 & echo [MISSING] src\utils\validation.ts.txt)
+if exist "src\utils\__tests__\validation.test.ts.txt"                                (ren "src\utils\__tests__\validation.test.ts.txt"                                 "validation.test.ts"         & set /a OK+=1 & echo [OK]      src\utils\__tests__\validation.test.ts.txt)                                else (set /a MISSING+=1 & echo [MISSING] src\utils\__tests__\validation.test.ts.txt)
 
 echo.
 echo Restored : %OK%
 echo Missing  : %MISSING%
 echo.
 pause
-goto :eof
-
-:restore
-  if exist "%~1" (
-    for %%F in ("%~1") do ren "%~1" "%%~nF"
-    echo   [OK]      %~1
-    set /a OK+=1
-  ) else (
-    echo   [MISSING] %~1
-    set /a MISSING+=1
-  )
-goto :eof
+exit /b 0

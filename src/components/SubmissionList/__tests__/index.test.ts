@@ -20,20 +20,20 @@ describe('SubmissionList', () => {
 
   it('adds a submission to the list', () => {
     addSubmission({
-      name: 'Diego Silva',
-      email: 'diego@example.com',
+      name: 'Name Example',
+      email: 'email@example.com',
       dateOfBirth: '1990-05-13',
       phone: '+44 7123 456 789',
     });
 
     expect(wrapper.querySelectorAll('li')).toHaveLength(1);
-    expect(wrapper.textContent).toContain('Diego Silva');
+    expect(wrapper.textContent).toContain('Name Example');
   });
 
   it('removes a submission when the remove button is clicked', () => {
     addSubmission({
-      name: 'Diego Silva',
-      email: 'diego@example.com',
+      name: 'Name Example',
+      email: 'email@example.com',
       dateOfBirth: '1990-05-13',
       phone: '+44 7123 456 789',
     });

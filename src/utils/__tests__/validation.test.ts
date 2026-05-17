@@ -4,8 +4,8 @@ import { validateForm } from '../validation';
 describe('validateForm', () => {
   it('accepts valid data', () => {
     const result = validateForm({
-      name: 'Diego Silva',
-      email: 'diego@example.com',
+      name: 'Name Example',
+      email: 'email@example.com',
       dateOfBirth: '1990-05-13',
       phone: '+44 7123 456 789',
     });

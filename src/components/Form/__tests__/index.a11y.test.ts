@@ -77,30 +77,125 @@ describe('Form – Accessibility', () => {
     });
   });
 
-  describe('input types', () => {
-    it('email field uses type="email"', () => {
-      expect(wrapper.querySelector('input[name="email"]')?.getAttribute('type')).toBe('email');
+  describe('aria-describedby — field error association', () => {
+    it('every input has aria-describedby pointing to an existing element', () => {
+      wrapper.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
+        const describedById = input.getAttribute('aria-describedby');
+        expect(describedById, `aria-describedby on input#${input.id}`).toBeTruthy();
+        const target = wrapper.querySelector(`#${describedById}`);
+        expect(target, `element #${describedById}`).not.toBeNull();
+      });
     });
 
-    it('date of birth field uses type="date"', () => {
-      expect(wrapper.querySelector('input[name="dateOfBirth"]')?.getAttribute('type')).toBe('date');
+    it('each field error element id follows the pattern error-{inputName}', () => {
+      wrapper.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
+        const expectedId = `error-${input.name}`;
+        expect(wrapper.querySelector(`#${expectedId}`)).not.toBeNull();
+      });
     });
 
-    it('phone field uses type="tel"', () => {
-      expect(wrapper.querySelector('input[name="phone"]')?.getAttribute('type')).toBe('tel');
+    it('field error elements have class "field-error"', () => {
+      wrapper.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
+        const errorEl = wrapper.querySelector(`#error-${input.name}`);
+        expect(errorEl?.classList.contains('field-error')).toBe(true);
+      });
+    });
+  });
+
+  describe('aria-invalid — field error state', () => {
+    it('inputs have no aria-invalid before first submit', () => {
+      wrapper.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
+        expect(input.getAttribute('aria-invalid')).toBeNull();
+      });
     });
 
-    it('name field uses type="text"', () => {
-      expect(wrapper.querySelector('input[name="fullName"]')?.getAttribute('type')).toBe('text');
+    it('invalid fields have aria-invalid="true" after a failed submit', () => {
+      submitForm(wrapper); // all fields empty
+      ['fullName', 'email', 'dateOfBirth', 'phone'].forEach((name) => {
+        const input = wrapper.querySelector<HTMLInputElement>(`input[name="${name}"]`);
+        expect(input?.getAttribute('aria-invalid'), `aria-invalid on ${name}`).toBe('true');
+      });
+    });
+
+    it('valid fields have aria-invalid="false" after a partially failed submit', () => {
+      setInput(wrapper, 'fullName', 'Diego Silva');
+      setInput(wrapper, 'email', 'diego@example.com');
+      submitForm(wrapper); // name + email valid, dob + phone empty
+      expect(
+        wrapper.querySelector<HTMLInputElement>('input[name="fullName"]')?.getAttribute('aria-invalid'),
+      ).toBe('false');
+      expect(
+        wrapper.querySelector<HTMLInputElement>('input[name="email"]')?.getAttribute('aria-invalid'),
+      ).toBe('false');
+      expect(
+        wrapper.querySelector<HTMLInputElement>('input[name="dateOfBirth"]')?.getAttribute('aria-invalid'),
+      ).toBe('true');
+      expect(
+        wrapper.querySelector<HTMLInputElement>('input[name="phone"]')?.getAttribute('aria-invalid'),
+      ).toBe('true');
+    });
+
+    it('aria-invalid is removed from all fields after a successful submit', () => {
+      fillValid(wrapper);
+      submitForm(wrapper);
+      wrapper.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
+        expect(input.getAttribute('aria-invalid'), `aria-invalid on ${input.name}`).toBeNull();
+      });
+    });
+  });
+
+  describe('inline field error messages', () => {
+    it('field error elements are empty before first submit', () => {
+      wrapper.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
+        const errorEl = wrapper.querySelector(`#error-${input.name}`);
+        expect(errorEl?.textContent).toBe('');
+      });
+    });
+
+    it('shows inline error text for each invalid field after a failed submit', () => {
+      submitForm(wrapper);
+      expect(wrapper.querySelector('#error-fullName')?.textContent).toContain('Please enter your name');
+      expect(wrapper.querySelector('#error-email')?.textContent).toContain('Please enter your email');
+      expect(wrapper.querySelector('#error-dateOfBirth')?.textContent).toContain('Please enter your date of birth');
+      expect(wrapper.querySelector('#error-phone')?.textContent).toContain('Please enter your phone number');
+    });
+
+    it('clears inline error for a field that becomes valid on re-submit', () => {
+      submitForm(wrapper); // all invalid
+      setInput(wrapper, 'fullName', 'Diego Silva');
+      submitForm(wrapper); // fullName now valid
+      expect(wrapper.querySelector('#error-fullName')?.textContent).toBe('');
+    });
+
+    it('clears all inline errors after a successful submit', () => {
+      submitForm(wrapper);
+      fillValid(wrapper);
+      submitForm(wrapper);
+      wrapper.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
+        expect(wrapper.querySelector(`#error-${input.name}`)?.textContent).toBe('');
+      });
+    });
+  });
+
+  describe('error summary focus management', () => {
+    it('error summary has tabindex="-1" to allow programmatic focus', () => {
+      const errorBox = wrapper.querySelector('.form-errors');
+      expect(errorBox?.getAttribute('tabindex')).toBe('-1');
+    });
+
+    it('error summary receives focus after a failed submit', () => {
+      submitForm(wrapper);
+      const errorBox = wrapper.querySelector('.form-errors');
+      expect(document.activeElement).toBe(errorBox);
+    });
+
+    it('error summary has aria-live="polite"', () => {
+      const errorBox = wrapper.querySelector('.form-errors');
+      expect(errorBox?.getAttribute('aria-live')).toBe('polite');
     });
   });
 
   describe('live region (error / success feedback)', () => {
-    it('feedback container has aria-live="polite"', () => {
-      const errorBox = wrapper.querySelector('.form-errors');
-      expect(errorBox?.getAttribute('aria-live')).toBe('polite');
-    });
-
     it('announces all validation errors on an empty submit', () => {
       submitForm(wrapper);
       const text = wrapper.querySelector('.form-errors')?.textContent ?? '';
@@ -132,12 +227,28 @@ describe('Form – Accessibility', () => {
     it('error list is cleared and replaced on re-submit', () => {
       submitForm(wrapper);
       const firstCount = wrapper.querySelectorAll('.form-errors li').length;
-
       setInput(wrapper, 'fullName', 'Diego Silva');
       submitForm(wrapper);
       const secondCount = wrapper.querySelectorAll('.form-errors li').length;
-
       expect(secondCount).toBeLessThan(firstCount);
+    });
+  });
+
+  describe('input types', () => {
+    it('email field uses type="email"', () => {
+      expect(wrapper.querySelector('input[name="email"]')?.getAttribute('type')).toBe('email');
+    });
+
+    it('date of birth field uses type="date"', () => {
+      expect(wrapper.querySelector('input[name="dateOfBirth"]')?.getAttribute('type')).toBe('date');
+    });
+
+    it('phone field uses type="tel"', () => {
+      expect(wrapper.querySelector('input[name="phone"]')?.getAttribute('type')).toBe('tel');
+    });
+
+    it('name field uses type="text"', () => {
+      expect(wrapper.querySelector('input[name="fullName"]')?.getAttribute('type')).toBe('text');
     });
   });
 

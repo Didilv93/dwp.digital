@@ -6,11 +6,20 @@
 
 .form-field
   display: grid
-  gap: 0.65rem
+  gap: 0.4rem
 
 label
   font-weight: $font-weight-medium
   color: $color-text
+
+.field-error
+  display: block
+  color: $color-danger-soft
+  font-size: $font-size-small
+  font-weight: $font-weight-medium
+
+.field-error:empty
+  display: none
 
 input
   width: 100%
@@ -23,9 +32,13 @@ input
   color: $color-text
 
   &:focus
-    outline: none
     border-color: $color-primary-soft
     box-shadow: 0 0 0 3px rgba(29, 122, 140, 0.18)
+    outline: 3px solid $color-primary-soft
+    outline-offset: 2px
+
+  &[aria-invalid="true"]
+    border-color: $color-danger
 
 .submit-button
   align-self: start
@@ -39,6 +52,10 @@ input
 
   &:hover
     background: $color-primary-soft
+
+  &:focus-visible
+    outline: 3px solid $color-primary
+    outline-offset: 2px
 
 .form-errors
   min-height: 2.5rem

@@ -1,5 +1,12 @@
 import './style.sass';
-import { validateForm, ValidationResult } from '../../utils/validation';
+import {
+  validateForm,
+  validateName,
+  validateEmail,
+  validateDateOfBirth,
+  validatePhone,
+  ValidationResult,
+} from '../../utils/validation';
 
 export interface SubmissionData {
   name: string;
@@ -14,7 +21,18 @@ interface FormComponent {
   element: HTMLElement;
 }
 
-function createField(labelText: string, inputType: string, inputName: string, placeholder: string) {
+interface FieldParts {
+  field: HTMLDivElement;
+  input: HTMLInputElement;
+  errorEl: HTMLSpanElement;
+}
+
+function createField(
+  labelText: string,
+  inputType: string,
+  inputName: string,
+  placeholder: string,
+): FieldParts {
   const field = document.createElement('div');
   field.className = 'form-field';
 
@@ -22,15 +40,20 @@ function createField(labelText: string, inputType: string, inputName: string, pl
   label.htmlFor = inputName;
   label.textContent = labelText;
 
+  const errorEl = document.createElement('span');
+  errorEl.id = `error-${inputName}`;
+  errorEl.className = 'field-error';
+
   const input = document.createElement('input');
   input.type = inputType;
   input.id = inputName;
   input.name = inputName;
   input.placeholder = placeholder;
   input.autocomplete = 'off';
+  input.setAttribute('aria-describedby', `error-${inputName}`);
 
-  field.append(label, input);
-  return { field, input };
+  field.append(label, errorEl, input);
+  return { field, input, errorEl };
 }
 
 export function createForm(onSubmit: SubmitHandler): FormComponent {
@@ -41,11 +64,20 @@ export function createForm(onSubmit: SubmitHandler): FormComponent {
   const errorBox = document.createElement('div');
   errorBox.className = 'form-errors';
   errorBox.setAttribute('aria-live', 'polite');
+  errorBox.setAttribute('tabindex', '-1');
 
-  const { field: nameField, input: nameInput } = createField('Full name', 'text', 'fullName', 'Ex. John Doe');
-  const { field: emailField, input: emailInput } = createField('Email', 'email', 'email', 'Ex. name@example.com');
-  const { field: dobField, input: dobInput } = createField('Date of birth', 'date', 'dateOfBirth', 'YYYY-MM-DD');
-  const { field: phoneField, input: phoneInput } = createField('Phone number', 'tel', 'phone', 'Ex. +44 7123 456 789');
+  const { field: nameField, input: nameInput, errorEl: nameErrorEl } = createField(
+    'Full name', 'text', 'fullName', 'Ex. John Doe',
+  );
+  const { field: emailField, input: emailInput, errorEl: emailErrorEl } = createField(
+    'Email', 'email', 'email', 'Ex. name@example.com',
+  );
+  const { field: dobField, input: dobInput, errorEl: dobErrorEl } = createField(
+    'Date of birth', 'date', 'dateOfBirth', 'YYYY-MM-DD',
+  );
+  const { field: phoneField, input: phoneInput, errorEl: phoneErrorEl } = createField(
+    'Phone number', 'tel', 'phone', 'Ex. +44 7123 456 789',
+  );
 
   const submitButton = document.createElement('button');
   submitButton.type = 'submit';
@@ -63,7 +95,26 @@ export function createForm(onSubmit: SubmitHandler): FormComponent {
     };
   }
 
-  function showErrors(result: ValidationResult) {
+  function applyFieldError(
+    input: HTMLInputElement,
+    errorEl: HTMLSpanElement,
+    check: string | true,
+  ) {
+    const invalid = check !== true;
+    input.setAttribute('aria-invalid', String(invalid));
+    errorEl.textContent = invalid ? check : '';
+  }
+
+  function clearFieldErrors() {
+    [nameInput, emailInput, dobInput, phoneInput].forEach((input) =>
+      input.removeAttribute('aria-invalid'),
+    );
+    [nameErrorEl, emailErrorEl, dobErrorEl, phoneErrorEl].forEach((el) => {
+      el.textContent = '';
+    });
+  }
+
+  function showSummary(result: ValidationResult) {
     errorBox.innerHTML = '';
     errorBox.classList.toggle('has-error', !result.valid);
 
@@ -76,6 +127,7 @@ export function createForm(onSubmit: SubmitHandler): FormComponent {
         list.appendChild(item);
       });
       errorBox.appendChild(list);
+      errorBox.focus();
       return;
     }
 
@@ -89,13 +141,25 @@ export function createForm(onSubmit: SubmitHandler): FormComponent {
     event.preventDefault();
 
     const submission = buildSubmission();
+
+    const nameCheck = validateName(submission.name);
+    const emailCheck = validateEmail(submission.email);
+    const dobCheck = validateDateOfBirth(submission.dateOfBirth);
+    const phoneCheck = validatePhone(submission.phone);
+
+    applyFieldError(nameInput, nameErrorEl, nameCheck);
+    applyFieldError(emailInput, emailErrorEl, emailCheck);
+    applyFieldError(dobInput, dobErrorEl, dobCheck);
+    applyFieldError(phoneInput, phoneErrorEl, phoneCheck);
+
     const validation = validateForm(submission);
-    showErrors(validation);
+    showSummary(validation);
 
     if (!validation.valid) {
       return;
     }
 
+    clearFieldErrors();
     onSubmit(submission);
     form.reset();
   });

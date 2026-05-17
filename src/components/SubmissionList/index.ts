@@ -8,7 +8,7 @@ function buildItem(
   template: HTMLTemplateElement,
   list: HTMLUListElement,
   statusEl: HTMLElement,
-  listHeading: HTMLElement,
+  emptyState: HTMLElement,
 ): HTMLLIElement {
   const item = (template.content.cloneNode(true) as DocumentFragment).querySelector('li')!;
 
@@ -28,8 +28,8 @@ function buildItem(
     if (remaining.length > 0) {
       remaining[Math.min(idx, remaining.length - 1)].focus();
     } else {
-      listHeading.setAttribute('tabindex', '-1');
-      listHeading.focus();
+      emptyState.hidden = false;
+      emptyState.focus();
     }
 
     statusEl.textContent = '';
@@ -47,9 +47,12 @@ export function initSubmissionList(mount: HTMLElement): {
   const list = mount.querySelector<HTMLUListElement>('#submission-list')!;
   const template = mount.querySelector<HTMLTemplateElement>('#submission-item-template')!;
   const statusEl = mount.querySelector<HTMLElement>('.list-status')!;
-  const listHeading = mount.querySelector<HTMLElement>('#submission-list-title')!;
+  const emptyState = mount.querySelector<HTMLElement>('.empty-state')!;
 
   return {
-    addSubmission: (data) => list.appendChild(buildItem(data, template, list, statusEl, listHeading)),
+    addSubmission: (data) => {
+      emptyState.hidden = true;
+      list.appendChild(buildItem(data, template, list, statusEl, emptyState));
+    },
   };
 }

@@ -111,6 +111,33 @@ describe('SubmissionList – Accessibility', () => {
     });
   });
 
+  describe('empty state accessibility', () => {
+    it('is a <p> element', () => {
+      const emptyState = wrapper.querySelector('.empty-state');
+      expect(emptyState?.tagName.toLowerCase()).toBe('p');
+    });
+
+    it('has tabindex="-1" so it accepts programmatic focus without entering tab order', () => {
+      const emptyState = wrapper.querySelector<HTMLElement>('.empty-state')!;
+      expect(emptyState.tabIndex).toBe(-1);
+    });
+
+    it('is excluded from the accessibility tree when hidden', () => {
+      addSubmission(ALICE);
+      expect(wrapper.querySelector<HTMLElement>('.empty-state')?.hidden).toBe(true);
+    });
+
+    it('is included in the accessibility tree when visible', () => {
+      expect(wrapper.querySelector<HTMLElement>('.empty-state')?.hidden).toBe(false);
+    });
+
+    it('has no axe violations when visible after last item is removed', async () => {
+      addSubmission(ALICE);
+      wrapper.querySelector<HTMLButtonElement>('button')?.click();
+      expect(await axe(wrapper)).toHaveNoViolations();
+    });
+  });
+
   describe('remove buttons', () => {
     it('aria-label includes the submitter name', () => {
       addSubmission(ALICE);

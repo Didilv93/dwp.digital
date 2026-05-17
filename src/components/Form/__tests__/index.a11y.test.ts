@@ -15,8 +15,8 @@ function submitForm(root: HTMLElement): void {
 }
 
 const VALID = {
-  fullName: 'Diego Silva',
-  email: 'diego@example.com',
+  fullName: 'Full Name',
+  email: 'email@example.com',
   dateOfBirth: '1990-05-13',
   phone: '+44 7123 456 789',
 };
@@ -127,8 +127,8 @@ describe('Form – Accessibility', () => {
     });
 
     it('valid fields get aria-invalid="false" on partial submit', () => {
-      setInput(wrapper, 'fullName', 'Diego Silva');
-      setInput(wrapper, 'email', 'diego@example.com');
+      setInput(wrapper, 'fullName', 'Full Name');
+      setInput(wrapper, 'email', 'email@example.com');
       submitForm(wrapper);
       expect(wrapper.querySelector<HTMLInputElement>('input[name="fullName"]')?.getAttribute('aria-invalid')).toBe('false');
       expect(wrapper.querySelector<HTMLInputElement>('input[name="email"]')?.getAttribute('aria-invalid')).toBe('false');
@@ -162,7 +162,7 @@ describe('Form – Accessibility', () => {
 
     it('clears inline error for a field that becomes valid on re-submit', () => {
       submitForm(wrapper);
-      setInput(wrapper, 'fullName', 'Diego Silva');
+      setInput(wrapper, 'fullName', 'Full Name');
       submitForm(wrapper);
       expect(wrapper.querySelector('#error-fullName')?.textContent).toBe('');
     });
@@ -223,7 +223,7 @@ describe('Form – Accessibility', () => {
     it('error count decreases when fields are fixed on re-submit', () => {
       submitForm(wrapper);
       const firstCount = wrapper.querySelectorAll('.form-errors li').length;
-      setInput(wrapper, 'fullName', 'Diego Silva');
+      setInput(wrapper, 'fullName', 'Full Name');
       submitForm(wrapper);
       expect(wrapper.querySelectorAll('.form-errors li').length).toBeLessThan(firstCount);
     });

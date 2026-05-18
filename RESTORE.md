@@ -2,7 +2,7 @@
 
 All project source files are renamed with a `.txt` suffix before delivery to comply with DWP email requirements. This file explains how to restore them and, if needed, how to repack them.
 
-> This file (`RESTORE.md`) is intentionally kept out of the conversion manifest and always arrives with its original extension, so it is readable immediately without any prior steps.
+> **This file arrives as `RESTORE.md.txt`.** Open it in any text editor before following the steps below.
 
 ---
 
@@ -14,15 +14,23 @@ Run **one** of the commands below from the **project root** to rename all `.txt`
 
 ```powershell
 Get-ChildItem -Recurse -File -Filter "*.txt" |
-  Where-Object { $_.FullName -notmatch '\\(node_modules|\.git|dist|coverage)\\' } |
+  Where-Object { $_.FullName -notmatch '\\(scripts|node_modules|\.git|dist|coverage|\.lighthouseci|\.claude|public)\\' } |
   ForEach-Object { Rename-Item -Path $_.FullName -NewName ($_.Name -replace '\.txt$', '') }
 ```
 
 ### Linux / Mac — bash
 
 ```bash
-find . \( -path ./node_modules -o -path ./.git -o -path ./dist -o -path ./coverage \) \
-  -prune -o -name "*.txt" -print | while IFS= read -r f; do mv "$f" "${f%.txt}"; done
+find . -type f -name "*.txt" \
+  ! -path './scripts/*' \
+  ! -path './node_modules/*' \
+  ! -path './.git/*' \
+  ! -path './dist/*' \
+  ! -path './coverage/*' \
+  ! -path './.lighthouseci/*' \
+  ! -path './.claude/*' \
+  ! -path './public/*' \
+  | while IFS= read -r f; do mv "$f" "${f%.txt}"; done
 ```
 
 After restoration, follow the **Getting started** steps in `README.md`.
@@ -36,27 +44,24 @@ Use these commands to rename all source files to `.txt` before zipping and sendi
 ### Windows — PowerShell
 
 ```powershell
-# Root-level files
-'.eslintrc.cjs', '.gitignore', '.lighthouserc.json', 'eslint.config.cjs', 'IMPROVEMENTS.md', 'index.html',
-'package.json', 'package-lock.json', 'README.md', 'REQUIREMENTS.md',
-'tsconfig.json', 'vite.config.ts' |
-  ForEach-Object { if (Test-Path $_) { Rename-Item $_ "$_.txt" } }
-
-# src/ and public/ directories
-Get-ChildItem -Recurse -File src, public |
+Get-ChildItem -Recurse -File |
+  Where-Object { $_.FullName -notmatch '\\(scripts|node_modules|\.git|dist|coverage|\.lighthouseci|\.claude|public)\\' } |
+  Where-Object { $_.Extension -ne '.txt' } |
   ForEach-Object { Rename-Item -Path $_.FullName -NewName ($_.Name + '.txt') }
 ```
 
 ### Linux / Mac — bash
 
 ```bash
-# Root-level files
-for f in .eslintrc.cjs .gitignore .lighthouserc.json eslint.config.cjs IMPROVEMENTS.md index.html \
-         package.json package-lock.json README.md REQUIREMENTS.md \
-         tsconfig.json vite.config.ts; do
-  [ -f "$f" ] && mv "$f" "$f.txt"
-done
-
-# src/ and public/ directories
-find src public -type f | while IFS= read -r f; do mv "$f" "$f.txt"; done
+find . -type f \
+  ! -path './scripts/*' \
+  ! -path './node_modules/*' \
+  ! -path './.git/*' \
+  ! -path './dist/*' \
+  ! -path './coverage/*' \
+  ! -path './.lighthouseci/*' \
+  ! -path './.claude/*' \
+  ! -path './public/*' \
+  ! -name '*.txt' \
+  | while IFS= read -r f; do mv "$f" "$f.txt"; done
 ```

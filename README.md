@@ -36,11 +36,15 @@ A custom **Vite plugin** reads each `index.html` at build time and inlines it in
 
 The form is layered so each level adds capability without breaking the one below:
 
-| Layer | Behaviour |
-|---|---|
-| HTML only | Form renders with `action` and `method="post"`; `required` attributes enable native browser validation; `<noscript>` banner informs the user that JavaScript is needed |
-| HTML + CSS | Layout, typography, and visual states apply |
-| HTML + CSS + JS | `novalidate` is added programmatically so custom validation takes over; submissions are appended to the list without a page reload |
+| Layer             | Behaviour                                                  |
+|-------------------|------------------------------------------------------------|
+| HTML only         | Form renders with `action` and `method="post"`; `required` | 
+|                   | attributes enable native browser validation; `<noscript>`  |
+|                   | banner informs the user that JavaScript is needed;         |
+| HTML + CSS        | Layout, typography, and visual states apply;                |
+| HTML + CSS + JS   | `novalidate` is added programmatically so custom           |
+|                   | validation takes over, submissions are appended to the     |
+|                   | list without a page reload.                                 |
 
 ### Accessibility
 
@@ -110,12 +114,12 @@ npm run lint:fix          # check and auto-fix
 
 The Lighthouse CI configuration in `.lighthouserc.json` defines the performance budget:
 
-| Category | Threshold |
-|---|---|
-| Performance | ≥ 90 |
-| Accessibility | 100 (hard fail) |
-| Best practices | ≥ 90 |
-| SEO | ≥ 80 |
+|    Category    |    Threshold    |
+|----------------|-----------------|
+| Performance    | ≥ 90            |
+| Accessibility  | 100 (hard fail) |
+| Best practices | ≥ 90            |
+| SEO            | ≥ 80            |
 
 Run against a production build:
 
@@ -127,28 +131,27 @@ npm run lighthouse
 
 ## Technologies
 
-| Layer | Choice |
-|---|---|
-| Language | TypeScript (strict) |
-| Styles | Sass (component-scoped) |
-| Bundler | Vite |
-| Testing | Vitest + jsdom + vitest-axe |
-| Accessibility | axe-core (WCAG 2.2 AA) |
-| Frameworks | None |
+| Layer         | Choice                      |
+|---------------|-----------------------------|
+| Language      | TypeScript (strict)         |
+| Styles        | Sass (component-scoped)     |
+| Bundler       | Vite                        |
+| Testing       | Vitest + jsdom + vitest-axe |
+| Accessibility | axe-core (WCAG 2.2 AA)      |
+| Frameworks    | None                        |
 
 ---
 
 ## Browser support
 
-Targets the [GOV.UK-required browser list](https://www.gov.uk/service-manual/technology/designing-for-different-browsers-and-devices). All APIs used (`querySelector`, `cloneNode`, `requestAnimationFrame`, `hidden`, CSS Grid, CSS Custom Properties) are natively supported across all targets without polyfills.
+Targets the [GOV.UK-required browser list](https://www.gov.uk/service-manual/technology/designing-for-different-browsers-and-devices) (updated February 2026). All APIs used (`querySelector`, `cloneNode`, `requestAnimationFrame`, `hidden`, CSS Grid, CSS Custom Properties) are natively supported across all targets without polyfills.
 
-| Browser | Versions |
-|---|---|
-| Google Chrome | Latest 2 |
-| Mozilla Firefox | Latest 2 |
-| Microsoft Edge | Latest 2 |
-| Apple Safari | Latest 2 |
-| Samsung Internet | Latest 2 |
+| Operating system | Browsers                                          |
+|------------------|---------------------------------------------------|
+| Windows          | Edge, Chrome, Firefox (latest stable)             |
+| macOS            | Safari, Chrome, Firefox (latest stable)           |
+| iOS              | Safari, Chrome, Edge (latest stable)              |
+| Android          | Chrome, Samsung Internet, Firefox (latest stable) |
 
 ---
 

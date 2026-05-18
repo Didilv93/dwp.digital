@@ -62,7 +62,7 @@ Accessibility was treated as a first-class concern throughout:
 ## Getting started
 
 > **Note — files arrive with a `.txt` extension.**
-> Before running anything, follow the instructions in [`RESTORE.md`](RESTORE.md) to rename all files back to their original extensions. `RESTORE.md` is the only file that keeps its extension on delivery and can be opened immediately.
+> Before running anything, follow the instructions in [`RESTORE.md.txt`](RESTORE.md.txt) to rename all files back to their original extensions.
 
 ### 1 · Install dependencies
 

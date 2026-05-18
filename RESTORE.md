@@ -37,7 +37,7 @@ Use these commands to rename all source files to `.txt` before zipping and sendi
 
 ```powershell
 # Root-level files
-'.eslintrc.cjs', '.gitignore', 'eslint.config.cjs', 'IMPROVEMENTS.md', 'index.html',
+'.eslintrc.cjs', '.gitignore', '.lighthouserc.json', 'eslint.config.cjs', 'IMPROVEMENTS.md', 'index.html',
 'package.json', 'package-lock.json', 'README.md', 'REQUIREMENTS.md',
 'tsconfig.json', 'vite.config.ts' |
   ForEach-Object { if (Test-Path $_) { Rename-Item $_ "$_.txt" } }
@@ -51,7 +51,7 @@ Get-ChildItem -Recurse -File src, public |
 
 ```bash
 # Root-level files
-for f in .eslintrc.cjs .gitignore eslint.config.cjs IMPROVEMENTS.md index.html \
+for f in .eslintrc.cjs .gitignore .lighthouserc.json eslint.config.cjs IMPROVEMENTS.md index.html \
          package.json package-lock.json README.md REQUIREMENTS.md \
          tsconfig.json vite.config.ts; do
   [ -f "$f" ] && mv "$f" "$f.txt"

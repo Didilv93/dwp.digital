@@ -89,3 +89,68 @@ npm run lint:fix          # check and auto-fix
 | Testing | Vitest + jsdom + vitest-axe |
 | Accessibility | axe-core (WCAG 2.2 AA) |
 | Frameworks | None |
+
+---
+
+## Browser support
+
+Targets the [GOV.UK-required browser list](https://www.gov.uk/service-manual/technology/designing-for-different-browsers-and-devices). All APIs used (`querySelector`, `cloneNode`, `requestAnimationFrame`, `hidden`, CSS Grid, CSS Custom Properties) are natively supported across all targets without polyfills.
+
+| Browser | Versions |
+|---|---|
+| Google Chrome | Latest 2 |
+| Mozilla Firefox | Latest 2 |
+| Microsoft Edge | Latest 2 |
+| Apple Safari | Latest 2 |
+| Samsung Internet | Latest 2 |
+
+---
+
+## Performance
+
+The Lighthouse CI configuration in `.lighthouserc.json` defines the performance budget:
+
+| Category | Threshold |
+|---|---|
+| Performance | ≥ 90 |
+| Accessibility | 100 (hard fail) |
+| Best practices | ≥ 90 |
+| SEO | ≥ 80 |
+
+Run against a production build:
+
+```bash
+npm run build
+npm run lighthouse
+```
+
+---
+
+## Manual testing checklist
+
+Automated axe-core catches ~30–40% of WCAG criteria. The following should be verified manually before submission:
+
+**Keyboard navigation**
+- [ ] Tab through all form fields and buttons in logical order
+- [ ] Submit form with Enter key
+- [ ] Remove a submission with Space/Enter on the Remove button
+- [ ] Confirm focus moves to the next Remove button (or empty state) after removal
+
+**Screen reader (NVDA + Chrome / VoiceOver + Safari)**
+- [ ] Error summary is announced on invalid submission
+- [ ] Individual field errors are read when focusing each invalid input
+- [ ] Live region announces removal and successful submission
+- [ ] Empty state is announced when last item is removed
+
+**Zoom and reflow**
+- [ ] All content readable at 200% browser zoom with no horizontal scroll
+- [ ] Layout reflows to single column at 400% zoom (≈ 320 px viewport equivalent)
+- [ ] No text is clipped or truncated at any zoom level
+
+**High-contrast mode**
+- [ ] Form and list remain usable with Windows High Contrast enabled
+- [ ] Focus rings remain visible
+
+**Progressive enhancement**
+- [ ] With JavaScript disabled: `<noscript>` banner is visible and informative
+- [ ] With JavaScript disabled: form has `action` and `method` attributes (no silent failure)

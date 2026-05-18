@@ -18,6 +18,30 @@
 *, *::before, *::after
   box-sizing: border-box
 
+.skip-link
+  position: absolute
+  top: -100%
+  left: 0
+  z-index: 100
+  padding: 0.75rem 1.25rem
+  background: $color-primary
+  color: $color-surface
+  font-weight: $font-weight-bold
+  text-decoration: none
+  border-radius: 0 0 $radius-sm $radius-sm
+
+  &:focus
+    top: 0
+
+.noscript-banner
+  padding: 1rem 1.5rem
+  background: $color-danger
+  color: $color-surface
+  text-align: center
+
+  p
+    margin: 0
+
 html
   font-size: clamp(0.95rem, 1vw + 0.35rem, 1.05rem)
 

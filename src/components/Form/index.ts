@@ -62,6 +62,8 @@ export function initForm(mount: HTMLElement, onSubmit: SubmitHandler): void {
   const form = mount.querySelector<HTMLFormElement>('form')!;
   const errorBox = form.querySelector<HTMLElement>('.form-errors')!;
 
+  form.setAttribute('novalidate', '');
+
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 

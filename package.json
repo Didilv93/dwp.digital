@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint \"src/**/*.{ts,tsx,js,jsx}\"",
-    "lint:fix": "eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix"
+    "lint:fix": "eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix",
+    "lighthouse": "npx --yes @lhci/cli autorun"
   },
   "devDependencies": {
     "@types/node": "^25.8.0",

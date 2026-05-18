@@ -4,7 +4,9 @@
       "Bash(npm install *)",
       "Bash(node -e \"const m = require\\('./node_modules/vitest-axe/dist/index.cjs'\\); console.log\\(Object.keys\\(m\\)\\)\")",
       "Bash(npm test *)",
-      "Bash(Remove-Item \"src\\\\components\\\\SubmissionList\\\\index.test.ts\", \"src\\\\components\\\\SubmissionList\\\\index.a11y.test.ts\", \"src\\\\components\\\\Form\\\\index.a11y.test.ts\", \"src\\\\utils\\\\validation.test.ts\", \"src\\\\App\\\\index.a11y.test.ts\")"
+      "Bash(Remove-Item \"src\\\\components\\\\SubmissionList\\\\index.test.ts\", \"src\\\\components\\\\SubmissionList\\\\index.a11y.test.ts\", \"src\\\\components\\\\Form\\\\index.a11y.test.ts\", \"src\\\\utils\\\\validation.test.ts\", \"src\\\\App\\\\index.a11y.test.ts\")",
+      "WebFetch(domain:www.gov.uk)",
+      "WebFetch(domain:technology.blog.gov.uk)"
     ]
   }
 }

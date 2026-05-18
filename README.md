@@ -2,9 +2,9 @@
 
 ## Solution overview
 
-A contact form built with **Vanilla TypeScript**, **Sass**, and **Vite** — no UI frameworks. The user fills in name, email, date of birth and phone number; on submission the data is validated with custom logic and appended to a list on the same page. Each entry can be removed individually.
+A contact form built with **Vanilla TypeScript**, **Sass**, and **Vite**, no UI frameworks. The user fills in name, email, date of birth and phone number, on submission the data is validated with custom logic and appended to a list on the same page. Each entry can be removed individually.
 
-This is **not a SPA**. There is no client-side routing and no JavaScript-rendered shell. Component HTML is pre-rendered at build time and inlined into `index.html` — the page is fully structured before any script runs. JavaScript adds behaviour on top of existing HTML, which means the form degrades gracefully when scripting is unavailable.
+Component HTML is pre-rendered at build time and inlined into `index.html`, the page is fully structured before any script runs. JavaScript adds behaviour on top of existing HTML, which means the form degrades gracefully when scripting is unavailable.
 
 ### Architecture
 

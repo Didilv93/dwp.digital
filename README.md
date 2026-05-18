@@ -1,5 +1,9 @@
 # DWP Digital — Front End Developer Coding Exercise
 
+Candidate: Diego Silva
+Application ID number: 17055146
+Reference number: 450518
+
 ## Solution overview
 
 A contact form built with **Vanilla TypeScript**, **Sass**, and **Vite**, no UI frameworks. The user fills in name, email, date of birth and phone number, on submission the data is validated with custom logic and appended to a list on the same page. Each entry can be removed individually.

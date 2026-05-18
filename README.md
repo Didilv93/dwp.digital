@@ -41,10 +41,10 @@ The form is layered so each level adds capability without breaking the one below
 | HTML only         | Form renders with `action` and `method="post"`; `required` | 
 |                   | attributes enable native browser validation; `<noscript>`  |
 |                   | banner informs the user that JavaScript is needed;         |
-| HTML + CSS        | Layout, typography, and visual states apply;                |
+| HTML + CSS        | Layout, typography, and visual states apply;               |
 | HTML + CSS + JS   | `novalidate` is added programmatically so custom           |
 |                   | validation takes over, submissions are appended to the     |
-|                   | list without a page reload.                                 |
+|                   | list without a page reload.                                |
 
 ### Accessibility
 

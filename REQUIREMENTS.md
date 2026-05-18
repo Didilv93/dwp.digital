@@ -1,6 +1,7 @@
 Front End Developer
 
 Application ID number: 17055146
+Reference number: 450518
 
 Thank you for your application for the role of Front End Developer within DWP Digital.
 We have looked at your application and would like to progress your application to the next stage of the recruitment process, which is a coding exercise. As DWP Digital build complex systems and has a high-quality team of developers, we ask all candidates to complete a technical test as part of the assessment process to:

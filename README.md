@@ -34,7 +34,8 @@ Accessibility was treated as a first-class concern throughout: WCAG 2.2 AA colou
 
 ## Getting started
 
-> **Note — files arrive with a `.txt` extension.** See the [Restoring files from `.txt`](#restoring-files-from-txt) section below before running the application.
+> **Note — files arrive with a `.txt` extension.**
+> Before running anything, follow the instructions in [`RESTORE.md`](RESTORE.md) to rename all files back to their original extensions. `RESTORE.md` is the only file that keeps its extension on delivery and can be opened immediately.
 
 ### 1 · Install dependencies
 
@@ -55,46 +56,6 @@ Open the URL shown in the terminal (e.g. `http://localhost:5173`).
 ```bash
 npm run build
 npm run preview
-```
-
----
-
-## Restoring files from `.txt`
-
-To comply with DWP email delivery requirements, all project files were renamed with a `.txt` suffix before zipping. The `scripts/` folder contains helpers to convert them back instantly.
-
-### Step 1 — restore the scripts themselves
-
-The scripts also arrive as `.txt`. Rename them first by removing the `.txt` extension:
-
-| File as received | Rename to |
-|---|---|
-| `scripts/from_txt.bat.txt` | `scripts/from_txt.bat` |
-| `scripts/to_txt.bat.txt` | `scripts/to_txt.bat` |
-| `scripts/from_txt.sh.txt` | `scripts/from_txt.sh` |
-| `scripts/to_txt.sh.txt` | `scripts/to_txt.sh` |
-
-### Step 2 — run the restore script
-
-**Windows** — double-click `scripts\from_txt.bat`, or run from the project root:
-```
-scripts\from_txt.bat
-```
-
-**Linux / Mac** — run from the project root:
-```bash
-bash scripts/from_txt.sh
-```
-
-All 32 project files will be renamed back to their original extensions in place. The folder structure is untouched.
-
-### Re-converting to `.txt` (optional)
-
-If you need to re-pack the project:
-
-```
-scripts\to_txt.bat        # Windows
-bash scripts/to_txt.sh    # Linux / Mac
 ```
 
 ---
